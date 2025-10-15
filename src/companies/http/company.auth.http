@@ -1,0 +1,45 @@
+### 🧪 Create Company (valid data)
+POST http://localhost:3000/companies/signup
+Content-Type: application/json
+
+{
+  "companyName": "TechPro Industries",
+  "slug": "techpro-industries",
+  "industry": "Technology",
+  "email": "contact@techpro.com",
+  "website": "https://techpro.com",
+  "companySize": "51-200",
+  "description": "A next-generation software solutions provider.",
+  "logo": "https://techpro.com/logo.png",
+  "password": "securePass123",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+
+### 🧩 Create Company (minimal valid data)
+POST http://localhost:3000/companies/signup
+Content-Type: application/json
+
+{
+  "email": "minimal@example.com",
+  "password": "minpass123"
+}
+
+### ❌ Invalid Email Test
+POST http://localhost:3000/companies/signup
+Content-Type: application/json
+
+{
+  "companyName": "InvalidEmail Co",
+  "email": "invalid-email",
+  "password": "weakpass"
+}
+
+### ❌ Missing Required Fields Test
+POST {{ baseUrl }}/companies/signup
+Content-Type: application/json
+
+{
+  "email": "missing@example.com",
+  "password": "password123"
+}

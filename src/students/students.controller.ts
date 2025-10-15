@@ -28,7 +28,7 @@ export class StudentsController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(@Body() loginStudentDto: LoginStudentDto) {
-    return this.studentsService.login(loginStudentDto);
+    return this.studentsService.signUp(loginStudentDto);
   }
 
   @UseGuards(LocalAuthGuard)

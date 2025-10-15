@@ -1,0 +1,30 @@
+### Student sign-up (matches CreateStudentDto)
+POST http://localhost:3000/students/signup
+Content-Type: application/json
+
+{
+    "email": "john.doe@example.com",
+    "password": "StrongPassw0rd!",
+    "firstName": "John",
+    "lastName": "Doe",
+    "avatar": "https://example.com/avatars/john.jpg",
+    "bio": "Computer science student interested in backend development.",
+    "university": "State University",
+    "major": "Computer Science",
+    "graduationYear": "2026"
+}
+
+
+
+### Student login (matches LoginStudentDto)
+POST http://localhost:3000/students/login
+Content-Type: application/json
+
+{
+    "email": "john.doe@example.com",
+    "password": "StrongPassw0rd!"
+}
+
+### Student profile (requires authentication)
+GET http://localhost:3000/students/profile
+Authorization: Bearer <token>

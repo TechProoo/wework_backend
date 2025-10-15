@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { StudentsModule } from './students/students.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './students/guards/jwt-auth.guard';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
-  imports: [StudentsModule],
+  imports: [StudentsModule, CompaniesModule],
   controllers: [AppController],
   providers: [
     AppService,
