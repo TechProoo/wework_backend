@@ -4,12 +4,10 @@ POST http://localhost:3000/students/signup
 Content-Type: application/json
 
 {
-    "email": "john.doe@example.com",
+    "email": "john.doe@exam.com",
     "password": "StrongPassw0rd!",
     "firstName": "John",
     "lastName": "Doe",
-    "avatar": "https://example.com/avatars/john.jpg",
-    "bio": "Computer science student interested in backend development.",
     "university": "State University",
     "major": "Computer Science",
     "graduationYear": "2026"
@@ -22,10 +20,11 @@ POST http://localhost:3000/students/login
 Content-Type: application/json
 
 {
-    "email": "john.doe@example.com",
+    "email": "john.doe@exam.com",
     "password": "StrongPassw0rd!"
 }
 
 ### Student profile (requires authentication)
 GET http://localhost:3000/students/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ28yODg4MjAwMDBmbDRzd2p1Mzg5eDIiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwiYXZhdGFyIjoiaHR0cHM6Ly9leGFtcGxlLmNvbS9hdmF0YXJzL2pvaG4uanBnIiwiYmlvIjoiQ29tcHV0ZXIgc2NpZW5jZSBzdHVkZW50IGludGVyZXN0ZWQgaW4gYmFja2VuZCBkZXZlbG9wbWVudC4iLCJyb2xlIjoiU1RVREVFTlQiLCJpZlZlcmlmaWVkImZhbHNlLCJ2ZXJpZmljYXRpb25Ub2tlbiI6bnVsbCwicGFzc3dvcmRSZXNldFRva2VuIjpudWxsLCJjcmVhdGVkQXQiOiIyMDI1LTEwLTEyVDE4OjUwOjU4Ljg1MFoiLCJ1cGRhdGVkQXQiOiIyMDI1LTEwLTEyVDE4OjUwOjU4Ljg1MFoiLCJ1bml2ZXJzaXR5IjoiU3RhdGUgVW5pdmVyc2l0eSIsIm1ham9yIjoiQ29tcHV0ZXIgU2NpZW5jZSIsImdyYWR1YXRpb25ZZWFyIjoiMjAyNiIsImVucm9sbG1lbnRzIjpbXSwicmV2aWV3cyI6W10sInBheW1lbnRzIjpbXSwiYXBwbGljYXRpb25zIjpbXSwiaWF0IjoxNzYwMzI0MDgwLCJleHAiOjE3NjAzMjQxNDB9.tVy8KL67qKdmS4d_PH8EjtlBQBvp_EuSxpVS4a5plVE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3Jmczl4NzAwMDBmbDdrNjdmaWpteG8iLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJjcmVhdGVkQXQiOiIyMDI1LTEwLTE1VDAzOjMzOjQ3LjcwNVoiLCJlbnJvbGxtZW50cyI6W10sInJldmlld3MiOltdLCJwYXltZW50cyI6W10sImFwcGxpY2F0aW9ucyI6W10sImlhdCI6MTc2MDUzNjI5NCwiZXhwIjoxNzYwNTM2MzU0fQ.GjucB_8LqHdocbSjUPDDD6IWEvdLywB2Wk2cByepSmI
+

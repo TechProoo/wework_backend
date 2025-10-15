@@ -10,16 +10,17 @@ export class CreateCompanyDto {
   @IsString()
   companyName: string;
 
-  @IsOptional()
+  @IsEmail()
+  email: string;
+
+  // Plain password supplied by the client; the service should store a hashed value in the DB
   @IsString()
-  slug?: string;
+  @MinLength(6)
+  password: string;
 
   @IsOptional()
   @IsString()
   industry?: string;
-
-  @IsEmail()
-  email: string;
 
   @IsOptional()
   @IsUrl()
@@ -27,26 +28,5 @@ export class CreateCompanyDto {
 
   @IsOptional()
   @IsString()
-  companySize?: string;
-
-  @IsOptional()
-  @IsString()
   description?: string;
-
-  @IsOptional()
-  @IsUrl()
-  logo?: string;
-
-  // Admin credentials for the company (will create a User with role COMPANY)
-  @IsString()
-  @MinLength(6)
-  password: string;
-
-  @IsOptional()
-  @IsString()
-  firstName?: string;
-
-  @IsOptional()
-  @IsString()
-  lastName?: string;
 }

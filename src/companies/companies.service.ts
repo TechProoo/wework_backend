@@ -23,58 +23,45 @@ export class CompaniesService {
 
     const hashed = await bcrypt.hash(password, 10);
 
+    // Create the company and store passwordHash on the Company model (schema has passwordHash on Company)
     const created = await this.prisma.company.create({
       data: {
-        email,
         companyName,
-        logo: rest.logo,
-        website: rest.website,
-        description: rest.description,
-        companySize: rest.companySize,
-        industry: rest.industry,
-        slug: companyName.toLowerCase().replace(/\s+/g, '-'),
-      },
-    });
-
-    // Create a corresponding user record as company admin
-    const user = await this.prisma.user.create({
-      data: {
         email,
         passwordHash: hashed,
-        firstName: rest.firstName ?? null,
-        lastName: rest.lastName ?? null,
-        role: 'COMPANY',
-        companyId: created.id,
+        industry: (rest as any).industry ?? null,
+        website: (rest as any).website ?? null,
+        description: (rest as any).description ?? null,
       },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash, companyId, ...safeUser } = user;
-    return { company: created, user: safeUser };
+    const { passwordHash, ...safeCompany } = created;
+    return { company: safeCompany };
   }
 
   async validateUser(email: string, password: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) return null;
-    const ok = await bcrypt.compare(password, user.passwordHash);
+    const company = await this.prisma.company.findUnique({ where: { email } });
+    if (!company) return null;
+    const ok = await bcrypt.compare(password, company.passwordHash);
     if (!ok) return null;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash, companyId, ...safeUser } = user;
-    return safeUser;
+    const { passwordHash, ...safeCompany } = company;
+    return safeCompany;
   }
 
   async login(dto: LoginCompanyDto) {
     const { email, password } = dto;
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const company = await this.prisma.company.findUnique({ where: { email } });
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!company) throw new NotFoundException('Company not found');
 
-    const ok = await bcrypt.compare(password, user.passwordHash);
+    const ok = await bcrypt.compare(password, company.passwordHash);
     if (!ok) throw new UnauthorizedException('Invalid password');
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash, companyId, ...safeUser } = user;
-    return { access_token: await this.jwtService.signAsync(safeUser) };
+    const { passwordHash, ...safeCompany } = company;
+    return { access_token: await this.jwtService.signAsync(safeCompany) };
   }
 }

@@ -13,22 +13,38 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { LoginStudentDto } from './dto/login-student.dto';
 import { Public } from '../decorators/public.decorator';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { SignupResponse } from './interfaces/students.auth';
 
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
 
+  @Public()
   @Post('signup')
-  create(@Body() createStudentDto: CreateStudentDto) {
-    return this.studentsService.signUp(createStudentDto);
+  @HttpCode(HttpStatus.CREATED)
+  async create(
+    @Body() createStudentDto: CreateStudentDto,
+  ): Promise<SignupResponse> {
+    const student = await this.studentsService.signUp(createStudentDto);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Student account created successfully',
+      data: student,
+    };
   }
 
   @Public()
-  @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() loginStudentDto: LoginStudentDto) {
-    return this.studentsService.signUp(loginStudentDto);
+  async login(@Body() loginStudentDto: LoginStudentDto) {
+    const token = await this.studentsService.login(loginStudentDto);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Login successful',
+      data: token,
+    };
   }
 
   @UseGuards(LocalAuthGuard)

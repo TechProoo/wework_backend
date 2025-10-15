@@ -58,9 +58,6 @@ describe('CompaniesService (auth flow)', () => {
         findUnique: jest.fn().mockResolvedValue(null),
         create: jest.fn().mockResolvedValue(fakeCompany),
       },
-      user: {
-        create: jest.fn().mockResolvedValue(fakeUser),
-      },
     };
 
     const dto: any = {
@@ -75,17 +72,15 @@ describe('CompaniesService (auth flow)', () => {
 
     const result = await service.signUp(dto);
 
-    // Expect company and user objects
+    // Expect company object
     expect(result).toHaveProperty('company');
-    expect(result).toHaveProperty('user');
     expect(result.company.id).toBe(fakeCompany.id);
-    expect(result.user.email).toBe(email);
 
     // Ensure prisma methods were called
     expect((service as any).prisma.company.findUnique).toHaveBeenCalledWith({
       where: { email },
     });
     expect((service as any).prisma.company.create).toHaveBeenCalled();
-    expect((service as any).prisma.user.create).toHaveBeenCalled();
+    // prisma.user.create should not be called because we don't have a separate User model
   });
 });
