@@ -73,8 +73,8 @@ describe('CompaniesService (auth flow)', () => {
     const result = await service.signUp(dto);
 
     // Expect company object
-    expect(result).toHaveProperty('company');
-    expect(result.company.id).toBe(fakeCompany.id);
+    expect(result).toHaveProperty('id');
+    expect(result.id).toBe(fakeCompany.id);
 
     // Ensure prisma methods were called
     expect((service as any).prisma.company.findUnique).toHaveBeenCalledWith({

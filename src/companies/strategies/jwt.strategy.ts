@@ -17,6 +17,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: { id?: string; sub?: string; [key: string]: any }) {
+    // If you sign the full user object into the token (safeUser), just return it.
+    // Normalize the id property so downstream code can rely on `id`.
     const id = payload.id ?? payload.sub;
     return { id, ...payload };
   }

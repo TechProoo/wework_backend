@@ -3,9 +3,10 @@ import {
   ConflictException,
   NotFoundException,
   UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { LoginCompanyDto } from './dto/login-company.dto';
@@ -16,52 +17,74 @@ export class CompaniesService {
   constructor(private jwtService: JwtService) {}
 
   async signUp(createCompanyDto: CreateCompanyDto) {
-    const { email, companyName, password, ...rest } = createCompanyDto;
+    let { email, companyName, password, ...rest } = createCompanyDto;
+    email = String(email).trim().toLowerCase();
 
-    const existing = await this.prisma.company.findUnique({ where: { email } });
-    if (existing) throw new ConflictException('Email already in use');
+    try {
+      // Check if email already exists
+      const existing = await this.prisma.company.findUnique({
+        where: { email },
+      });
+      if (existing) throw new ConflictException('Email already in use');
 
-    const hashed = await bcrypt.hash(password, 10);
+      const hashed = await bcrypt.hash(password, 10);
 
-    // Create the company and store passwordHash on the Company model (schema has passwordHash on Company)
-    const created = await this.prisma.company.create({
-      data: {
-        companyName,
-        email,
-        passwordHash: hashed,
-        industry: (rest as any).industry ?? null,
-        website: (rest as any).website ?? null,
-        description: (rest as any).description ?? null,
-      },
-    });
+      // Create the company and store passwordHash
+      const created = await this.prisma.company.create({
+        data: {
+          companyName,
+          email,
+          passwordHash: hashed,
+          industry: rest.industry ?? null,
+          website: rest.website ?? null,
+          description: rest.description ?? null,
+        },
+      });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash, ...safeCompany } = created;
-    return { company: safeCompany };
+      const { passwordHash, ...safeCompany } = created;
+
+      return safeCompany;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          const target = (error.meta?.target as string[])?.join(', ');
+          throw new ConflictException(`${target} already exists`);
+        }
+      }
+
+      console.error('Unexpected error:', error);
+      throw new InternalServerErrorException('An unexpected error occurred');
+    }
   }
 
   async validateUser(email: string, password: string) {
+    email = String(email).trim().toLowerCase();
     const company = await this.prisma.company.findUnique({ where: { email } });
     if (!company) return null;
+
     const ok = await bcrypt.compare(password, company.passwordHash);
     if (!ok) return null;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash, ...safeCompany } = company;
     return safeCompany;
   }
 
-  async login(dto: LoginCompanyDto) {
-    const { email, password } = dto;
-    const company = await this.prisma.company.findUnique({ where: { email } });
+  async login(loginCompanyDto: LoginCompanyDto) {
+    let { email, password } = loginCompanyDto;
+    email = String(email).trim().toLowerCase();
 
-    if (!company) throw new NotFoundException('Company not found');
+    const company = await this.prisma.company.findUnique({ where: { email } });
+    if (!company) {
+      console.log('Company not found with email:', email);
+      throw new UnauthorizedException('Invalid email');
+    }
 
     const ok = await bcrypt.compare(password, company.passwordHash);
     if (!ok) throw new UnauthorizedException('Invalid password');
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash, ...safeCompany } = company;
-    return { access_token: await this.jwtService.signAsync(safeCompany) };
+
+    const access_token = await this.jwtService.signAsync(safeCompany);
+    return { access_token };
   }
 }

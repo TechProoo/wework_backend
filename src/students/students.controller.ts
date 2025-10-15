@@ -48,7 +48,7 @@ export class StudentsController {
   }
 
   @UseGuards(LocalAuthGuard)
-  @Post('auth/logout')
+  @Post('logout')
   logout(@Request() req: { logout: () => void }): { message: string } {
     req.logout();
     return { message: 'Logout successful' };
