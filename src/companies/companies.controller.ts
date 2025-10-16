@@ -43,11 +43,9 @@ export class CompaniesController {
     };
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('logout')
-  logout(@Request() req: { logout: () => void }): { message: string } {
-    req.logout();
-    return { message: 'Logout successful' };
+  logout() {
+    return { message: 'Logout successful ' };
   }
 
   @Get('profile')

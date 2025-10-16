@@ -6,6 +6,8 @@ Content-Type: application/json
 {
     "email": "john.doe@exam.com",
     "password": "StrongPassw0rd!",
+    "email": "john.doe@exam.com",
+    "password": "StrongPassw0rd!",
     "firstName": "John",
     "lastName": "Doe",
     "university": "State University",
@@ -20,11 +22,29 @@ POST http://localhost:3000/students/login
 Content-Type: application/json
 
 {
-    "email": "john.doe@exam.com",
+    "email": "newemail@example.com",
     "password": "StrongPassw0rd!"
 }
 
 ### Student profile (requires authentication)
 GET http://localhost:3000/students/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3Jmczl4NzAwMDBmbDdrNjdmaWpteG8iLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJjcmVhdGVkQXQiOiIyMDI1LTEwLTE1VDAzOjMzOjQ3LjcwNVoiLCJlbnJvbGxtZW50cyI6W10sInJldmlld3MiOltdLCJwYXltZW50cyI6W10sImFwcGxpY2F0aW9ucyI6W10sImlhdCI6MTc2MDUzNjI5NCwiZXhwIjoxNzYwNTM2MzU0fQ.GjucB_8LqHdocbSjUPDDD6IWEvdLywB2Wk2cByepSmI
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3Jmczl4NzAwMDBmbDdrNjdmaWpteG8iLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJjcmVhdGVkQXQiOiIyMDI1LTEwLTE1VDAzOjMzOjQ3LjcwNVoiLCJlbnJvbGxtZW50cyI6W10sInJldmlld3MiOltdLCJwYXltZW50cyI6W10sImFwcGxpY2F0aW9ucyI6W10sImlhdCI6MTc2MDYzMjM3NCwiZXhwIjoxNzYwNjMyNDM0fQ.3chs0E2POI9oMXyYsD8sN4fO8n11wuL2JkHEyCsOO8k
 
+### 🚪 Logout 
+POST http://localhost:3000/students/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3Jmczl4NzAwMDBmbDdrNjdmaWpteG8iLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJjcmVhdGVkQXQiOiIyMDI1LTEwLTE1VDAzOjMzOjQ3LjcwNVoiLCJlbnJvbGxtZW50cyI6W10sInJldmlld3MiOltdLCJwYXltZW50cyI6W10sImFwcGxpY2F0aW9ucyI6W10sImlhdCI6MTc2MDYzMjM3NCwiZXhwIjoxNzYwNjMyNDM0fQ.3chs0E2POI9oMXyYsD8sN4fO8n11wuL2JkHEyCsOO8k
+
+
+PATCH http://localhost:3000/students/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3RybXFwdzAwMDBmbDlnMTRqem9pMnIiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJ4cCI6MCwibGV2ZWwiOjEsImNyZWF0ZWRBdCI6IjIwMjUtMTAtMTZUMTg6NDA6NTcuMjgzWiIsImVucm9sbG1lbnRzIjpbXSwicmV2aWV3cyI6W10sInBheW1lbnRzIjpbXSwiYXBwbGljYXRpb25zIjpbXSwicHJvZ3Jlc3MiOltdLCJpYXQiOjE3NjA2NDAyODcsImV4cCI6MTc2MDY0MDM0N30.ef2Prn2n5Wgg2CpwlC1_7a2seMRDn-9Wpr2TbROUl2E
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "university": "New University",
+  "major": "Computer Science",
+  "graduationYear": "2026",
+  "email": "newemail@example.com",
+  "password": "newpassword123"
+}

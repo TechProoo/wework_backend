@@ -7,12 +7,14 @@ import {
   UseGuards,
   Get,
   Request,
+  Patch,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
 import { LoginStudentDto } from './dto/login-student.dto';
 import { Public } from '../decorators/public.decorator';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+// import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignupResponse } from './interfaces/students.auth';
 
 @Controller('students')
@@ -47,15 +49,31 @@ export class StudentsController {
     };
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('logout')
-  logout(@Request() req: { logout: () => void }): { message: string } {
-    req.logout();
+  logout() {
     return { message: 'Logout successful' };
   }
 
   @Get('profile')
   getProfile(@Request() req: { user: any }): any {
     return req.user;
+  }
+
+  @Patch('profile')
+  @HttpCode(HttpStatus.OK)
+  async updateProfile(
+    @Request() req: { user: any },
+    @Body() updateStudentDto: UpdateStudentDto,
+  ) {
+    const updatedStudent = await this.studentsService.updateProfile(
+      req.user.id,
+      updateStudentDto,
+    );
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Profile updated successfully',
+      data: updatedStudent,
+    };
   }
 }

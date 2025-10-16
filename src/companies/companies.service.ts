@@ -20,41 +20,32 @@ export class CompaniesService {
     let { email, companyName, password, ...rest } = createCompanyDto;
     email = String(email).trim().toLowerCase();
 
-    try {
-      // Check if email already exists
-      const existing = await this.prisma.company.findUnique({
-        where: { email },
-      });
-      if (existing) throw new ConflictException('Email already in use');
+    // Check if email already exists
+    const existingUser = await this.prisma.company.findUnique({
+      where: { email },
+    });
 
-      const hashed = await bcrypt.hash(password, 10);
-
-      // Create the company and store passwordHash
-      const created = await this.prisma.company.create({
-        data: {
-          companyName,
-          email,
-          passwordHash: hashed,
-          industry: rest.industry ?? null,
-          website: rest.website ?? null,
-          description: rest.description ?? null,
-        },
-      });
-
-      const { passwordHash, ...safeCompany } = created;
-
-      return safeCompany;
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          const target = (error.meta?.target as string[])?.join(', ');
-          throw new ConflictException(`${target} already exists`);
-        }
-      }
-
-      console.error('Unexpected error:', error);
-      throw new InternalServerErrorException('An unexpected error occurred');
+    if (existingUser) {
+      throw new ConflictException('Email already in use');
     }
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    // Create the company and store passwordHash
+    const created = await this.prisma.company.create({
+      data: {
+        companyName,
+        email,
+        passwordHash: hashed,
+        industry: rest.industry ?? null,
+        website: rest.website ?? null,
+        description: rest.description ?? null,
+      },
+    });
+
+    const { passwordHash, ...safeCompany } = created;
+
+    return safeCompany;
   }
 
   async validateUser(email: string, password: string) {

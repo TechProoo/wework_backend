@@ -5,11 +5,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { UpdateStudentDto } from './dto/update-student.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
 import { LoginStudentDto } from './dto/login-student.dto';
 import { JwtService } from '@nestjs/jwt';
 import { StudentData } from './interfaces/students.auth';
+// import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class StudentsService {
@@ -65,6 +67,7 @@ export class StudentsService {
         reviews: true,
         payments: true,
         applications: true,
+        progress: true,
       },
     })) as StudentData | null;
 
@@ -94,6 +97,7 @@ export class StudentsService {
         reviews: true,
         payments: true,
         applications: true,
+        progress: true,
       },
     });
 
@@ -111,5 +115,65 @@ export class StudentsService {
     return {
       access_token: await this.jwtService.signAsync(safeUser),
     };
+  }
+
+  async updateProfile(
+    studentId: string,
+    updateStudentDto: UpdateStudentDto,
+  ): Promise<StudentData> {
+    // Check if student exists
+    const existingStudent = await this.prisma.student.findUnique({
+      where: { id: studentId },
+    });
+
+    if (!existingStudent) {
+      throw new NotFoundException('Student not found');
+    }
+
+    // If email is being updated, check if it's already in use
+    if (
+      updateStudentDto.email &&
+      updateStudentDto.email !== existingStudent.email
+    ) {
+      const emailInUse = await this.prisma.student.findUnique({
+        where: { email: updateStudentDto.email },
+      });
+
+      if (emailInUse) {
+        throw new ConflictException('Email already in use');
+      }
+    }
+
+    // Prepare update data
+    const updateData: any = {
+      firstName: updateStudentDto.firstName,
+      lastName: updateStudentDto.lastName,
+      university: updateStudentDto.university,
+      major: updateStudentDto.major,
+      graduationYear: updateStudentDto.graduationYear,
+      email: updateStudentDto.email,
+    };
+
+    // If password is being updated, hash it
+    if (updateStudentDto.password) {
+      updateData.passwordHash = await bcrypt.hash(
+        updateStudentDto.password,
+        10,
+      );
+    }
+
+    // Remove undefined fields
+    Object.keys(updateData).forEach(
+      (key) => updateData[key] === undefined && delete updateData[key],
+    );
+
+    // Update student
+    const updatedStudent = await this.prisma.student.update({
+      where: { id: studentId },
+      data: updateData,
+    });
+
+    const { passwordHash, ...safeUser } = updatedStudent;
+    return safeUser;
   }
 }

@@ -8,6 +8,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+//
+// 🔹 ENUMS
+//
 enum Role {
   STUDENT
   COMPANY
@@ -42,6 +45,12 @@ enum ApplicationStatus {
   REJECTED
 }
 
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
 //
 // 🔹 AUTH-LEVEL MODELS
 //
@@ -54,12 +63,14 @@ model Student {
   university     String
   major          String
   graduationYear String
+  xp             Int      @default(0) // 🎯 Experience points
+  level          Int      @default(1) // 🎯 Level based on XP
   createdAt      DateTime @default(now())
 
-  // Relations
   enrollments Enrollment[]
   reviews     Review[]
   payments    Payment[]
+  progress    Progress[] // track per-lesson progress
   applications Application[]
 }
 
@@ -73,7 +84,6 @@ model Company {
   description  String?
   createdAt    DateTime @default(now())
 
-  // Relations
   jobs Job[]
 }
 
@@ -100,19 +110,24 @@ model Course {
 }
 
 model Lesson {
-  id         String  @id @default(cuid())
-  courseId   String
-  title      String
-  duration   String
-  isPreview  Boolean @default(false)
-  contentUrl String?
-  order      Int     @default(0)
+  id            String  @id @default(cuid())
+  courseId      String
+  title         String
+  duration      String
+  order         Int     @default(0)
+  isPreview     Boolean @default(false)
+  contentUrl    String?
+  muxPlaybackId String?
+  quizId        String? @unique  // ✅ make unique
 
-  course Course @relation(fields: [courseId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id])
+  quiz     Quiz?  @relation(fields: [quizId], references: [id])
+  progress Progress[]
 }
 
+
 //
-// 🔹 LEARNING & PAYMENTS
+// 🔹 LEARNING & PROGRESS TRACKING
 //
 model Enrollment {
   id        String           @id @default(cuid())
@@ -128,6 +143,41 @@ model Enrollment {
   payment  Payment?
 }
 
+model Progress {
+  id         String          @id @default(cuid())
+  studentId  String
+  lessonId   String
+  status     ProgressStatus  @default(NOT_STARTED)
+  completedAt DateTime?
+  xpEarned   Int             @default(0)
+
+  student Student @relation(fields: [studentId], references: [id])
+  lesson  Lesson  @relation(fields: [lessonId], references: [id])
+}
+
+//
+// 🔹 QUIZZES
+//
+model Quiz {
+  id        String    @id @default(cuid())
+  title     String
+  lesson    Lesson?
+  questions Question[]
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  quizId    String
+  text      String
+  options   String[] // array of multiple-choice options
+  answer    String   // correct answer
+
+  quiz Quiz @relation(fields: [quizId], references: [id])
+}
+
+//
+// 🔹 PAYMENTS
+//
 model Payment {
   id                String        @id @default(cuid())
   studentId         String
@@ -139,12 +189,15 @@ model Payment {
   metadata          Json?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
+  enrollmentId      String?       @unique
 
-  student       Student      @relation(fields: [studentId], references: [id])
-  enrollment    Enrollment?  @relation(fields: [enrollmentId], references: [id])
-  enrollmentId  String?      @unique
+  student    Student     @relation(fields: [studentId], references: [id])
+  enrollment Enrollment? @relation(fields: [enrollmentId], references: [id])
 }
 
+//
+// 🔹 REVIEWS
+//
 model Review {
   id        String   @id @default(cuid())
   studentId String

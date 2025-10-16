@@ -21,25 +21,6 @@ Content-Type: application/json
   "password": "minpass123"
 }
 
-### ❌ Invalid Email Test
-POST http://localhost:3000/companies/signup
-Content-Type: application/json
-
-{
-  "companyName": "InvalidEmail Co",
-  "email": "invalid-email",
-  "password": "weakpass"
-}
-
-### ❌ Missing Required Fields Test
-POST http://localhost:3000/companies/signup
-Content-Type: application/json
-
-{
-  "email": "missing@example.com",
-  "password": "password123"
-}
-
 
 ### 🔑 Company Login (valid credentials)
 POST http://localhost:3000/companies/login
@@ -51,4 +32,7 @@ Content-Type: application/json
 }
 
 
-                                                                                                                                                                       
+### 🚪 Company Logout
+GET http://localhost:3000/companies/profile
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3M0eWJyNDAwMDBmbDI4b3g0NHF1eHEiLCJjb21wYW55TmFtZSI6IlRlY2hQcm8gVGVzdCIsImVtYWlsIjoiY29udGFjdEB0ZWNoLmNvbSIsImluZHVzdHJ5IjpudWxsLCJ3ZWJzaXRlIjpudWxsLCJkZXNjcmlwdGlvbiI6bnVsbCwiY3JlYXRlZEF0IjoiMjAyNS0xMC0xNVQxNToxODoyMC40MTZaIiwiaWF0IjoxNzYwNjMzOTYzLCJleHAiOjE3NjA2MzQwMjN9.itwwhd2Yl0ZL0bZFAKvMHV5Wx3sS6Lr7S1dbwGQs1XA
