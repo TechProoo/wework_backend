@@ -20,8 +20,8 @@ describe('CoursesService', () => {
     const dto: any = {
       title: 'Test Course',
       category: 'Test',
-      level: 'Beginner',
-      duration: '2h',
+      level: 'BEGINNER',
+      duration: 120,
       price: 9.99,
       thumbnail: 'img.png',
       description: 'desc',

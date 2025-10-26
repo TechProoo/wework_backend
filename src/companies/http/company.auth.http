@@ -1,5 +1,6 @@
 ### 🧪 Create Company (valid data)
-POST http://localhost:3000/companies/signup
+POST https://wework-backend.onrender.com
+/companies/signup
 Content-Type: application/json
 
 {
@@ -12,7 +13,8 @@ Content-Type: application/json
 }
 
 ### 🧩 Create Company (minimal valid data)
-POST http://localhost:3000/companies/signup
+POST https://wework-backend.onrender.com
+/companies/signup
 Content-Type: application/json
 
 {
@@ -23,7 +25,8 @@ Content-Type: application/json
 
 
 ### 🔑 Company Login (valid credentials)
-POST http://localhost:3000/companies/login
+POST https://wework-backend.onrender.com
+/companies/login
 Content-Type: application/json
 
 {
@@ -33,6 +36,7 @@ Content-Type: application/json
 
 
 ### 🚪 Company Logout
-GET http://localhost:3000/companies/profile
+GET https://wework-backend.onrender.com
+/companies/profile
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3M0eWJyNDAwMDBmbDI4b3g0NHF1eHEiLCJjb21wYW55TmFtZSI6IlRlY2hQcm8gVGVzdCIsImVtYWlsIjoiY29udGFjdEB0ZWNoLmNvbSIsImluZHVzdHJ5IjpudWxsLCJ3ZWJzaXRlIjpudWxsLCJkZXNjcmlwdGlvbiI6bnVsbCwiY3JlYXRlZEF0IjoiMjAyNS0xMC0xNVQxNToxODoyMC40MTZaIiwiaWF0IjoxNzYwNjMzOTYzLCJleHAiOjE3NjA2MzQwMjN9.itwwhd2Yl0ZL0bZFAKvMHV5Wx3sS6Lr7S1dbwGQs1XA

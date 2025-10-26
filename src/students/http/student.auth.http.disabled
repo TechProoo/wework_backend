@@ -1,5 +1,6 @@
 ### Student sign-up (matches CreateStudentDto)
-POST http://localhost:3000/students/signup
+POST https://wework-backend.onrender.com
+/students/signup
 Content-Type: application/json
 
 {
@@ -17,7 +18,8 @@ Content-Type: application/json
 
 
 ### Student login (matches LoginStudentDto)
-POST http://localhost:3000/students/login
+POST https://wework-backend.onrender.com
+/students/login
 Content-Type: application/json
 
 {
@@ -26,5 +28,6 @@ Content-Type: application/json
 }
 
 ### Student profile (requires authentication)
-GET http://localhost:3000/students/profile
+GET https://wework-backend.onrender.com
+/students/profile
 Authorization: Bearer <token>

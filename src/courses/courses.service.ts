@@ -19,63 +19,258 @@ export class CoursesService {
       title,
       category,
       level,
-      duration,
+      duration: suppliedDuration,
       price,
       thumbnail,
       description,
+      // legacy flat tutorial fields
       tutorialTitle,
       tutorialContent,
       tutorialVideoUrl,
+      // new nested
+      tutorial,
+      lessons,
     } = createCourseDto as any;
 
-    if (!title || !category || !level || !duration || price === undefined) {
-      throw new BadRequestException('Missing required course fields');
+    // Require only the essential identifying fields. Price can be 0 (free) so don't treat it as required here.
+    if (!title || !category || !level) {
+      throw new BadRequestException(
+        'Missing required course fields: title, category, and level are required',
+      );
+    }
+
+    // compute duration: if lessons provided, sum their durations; otherwise use suppliedDuration or 0
+    let computedDuration = 0;
+    if (Array.isArray(lessons) && lessons.length) {
+      computedDuration = lessons.reduce(
+        (sum: number, l: any) => sum + (Number(l.duration) || 0),
+        0,
+      );
+    } else {
+      computedDuration = Number(suppliedDuration) || 0;
     }
 
     const data: any = {
       title,
       category,
-      level,
-      duration,
+      level: level as any,
+      duration: computedDuration,
       price,
       thumbnail: thumbnail || '',
       description: description || '',
+      isPublished: false,
     };
 
-    // If tutorial info provided, nest create
-    if (tutorialTitle || tutorialContent || tutorialVideoUrl) {
+    // tutorial: prefer nested object, fall back to legacy flat fields
+    const tutorialObj =
+      tutorial ??
+      (tutorialTitle
+        ? {
+            title: tutorialTitle,
+            content: tutorialContent ?? null,
+            videoUrl: tutorialVideoUrl ?? null,
+          }
+        : null);
+    if (tutorialObj) {
       data.tutorial = {
         create: {
-          title: tutorialTitle ?? `${title} - Tutorial`,
-          content: tutorialContent ?? null,
-          videoUrl: tutorialVideoUrl ?? null,
+          title: tutorialObj.title ?? `${title} - Tutorial`,
+          content: tutorialObj.content ?? null,
+          videoUrl: tutorialObj.videoUrl ?? null,
         },
       };
     }
 
+    // lessons: if incoming lessons, prepare nested create including optional quiz
+    if (Array.isArray(lessons) && lessons.length) {
+      data.lessons = {
+        create: lessons.map((l: any) => {
+          const lessonData: any = {
+            id: l.id,
+            title: l.title,
+            order: l.order ?? 0,
+            duration: Number(l.duration) || 0,
+            isPreview: !!l.isPreview,
+            content: l.content ?? null,
+            videoUrl: l.videoUrl ?? null,
+            muxPlaybackId: l.muxPlaybackId ?? null,
+          };
+
+          if (l.quiz) {
+            lessonData.quiz = {
+              create: {
+                id: l.quiz.id,
+                title: l.quiz.title,
+                questions: {
+                  create: (l.quiz.questions || []).map((q: any) => ({
+                    id: q.id,
+                    text: q.text,
+                    options: q.options,
+                    answer: q.answer,
+                  })),
+                },
+              },
+            };
+          }
+
+          return lessonData;
+        }),
+      } as any;
+    }
+
     const created = await this.prisma.course.create({
       data,
-      // Prisma client may need to be regenerated after schema changes; cast include to any to avoid
-      // transient TypeScript type errors in this repo until `prisma generate` is run.
-      include: { tutorial: true } as any,
-    });
+      include: { lessons: true, tutorial: true } as unknown as any,
+    } as any);
 
-    return created;
+    return created as any;
   }
 
   findAll() {
-    return `This action returns all courses`;
+    return this.prisma.course.findMany({
+      include: { lessons: true, tutorial: true } as unknown as any,
+    } as any);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} course`;
+  findOne(id: string) {
+    return this.prisma.course.findUnique({
+      where: { id },
+      include: { lessons: true, tutorial: true } as unknown as any,
+    } as any);
   }
 
-  update(id: number, updateCourseDto: UpdateCourseDto) {
-    return `This action updates a #${id} course`;
+  async update(id: string, updateCourseDto: UpdateCourseDto) {
+    // perform a partial update
+    const data: any = { ...updateCourseDto };
+    // If duration is supplied, ensure number
+    if (data.duration !== undefined)
+      data.duration = Number(data.duration) as any;
+
+    return this.prisma.course.update({ where: { id }, data } as any) as any;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} course`;
+  remove(id: string) {
+    return this.prisma.course.delete({ where: { id } } as any) as any;
+  }
+
+  /** Create a lesson for a course and update the course duration (sum) */
+  async createLesson(courseId: string, dto: any) {
+    const {
+      title,
+      order = 0,
+      duration = 0,
+      isPreview = false,
+      content,
+      videoUrl,
+      muxPlaybackId,
+    } = dto;
+
+    const lesson = (await this.prisma.lesson.create({
+      data: {
+        courseId,
+        title,
+        order,
+        duration: (Number(duration) || 0) as any,
+        isPreview,
+        content: content ?? null,
+        videoUrl: videoUrl ?? null,
+        muxPlaybackId: muxPlaybackId ?? null,
+      },
+    } as any)) as any;
+
+    // update course total duration: increment by lesson.duration
+    await this.prisma.course.update({
+      where: { id: courseId },
+      data: { duration: { increment: lesson.duration } } as unknown as any,
+    } as any);
+
+    return lesson;
+  }
+
+  /** Import a full course with nested tutorial, lessons and quizzes in one request */
+  async importCourse(payload: any) {
+    const {
+      id,
+      title,
+      category,
+      level,
+      duration,
+      students,
+      rating,
+      price,
+      thumbnail,
+      description,
+      isPublished,
+      tutorial,
+      lessons,
+    } = payload;
+
+    const data: any = {
+      // if id provided, allow creating with specified id
+      ...(id ? { id } : {}),
+      title,
+      category,
+      level: level as any,
+      duration: Number(duration) || 0,
+      students: Number(students) || 0,
+      rating: Number(rating) || 0,
+      price: Number(price) || 0,
+      thumbnail: thumbnail ?? '',
+      description: description ?? '',
+      isPublished: !!isPublished,
+    };
+
+    if (tutorial) {
+      data.tutorial = {
+        create: {
+          title: tutorial.title,
+          content: tutorial.content ?? null,
+          videoUrl: tutorial.videoUrl ?? null,
+        },
+      };
+    }
+
+    if (Array.isArray(lessons) && lessons.length) {
+      data.lessons = {
+        create: lessons.map((l: any) => {
+          const lessonData: any = {
+            id: l.id,
+            title: l.title,
+            order: l.order ?? 0,
+            duration: Number(l.duration) || 0,
+            isPreview: !!l.isPreview,
+            content: l.content ?? null,
+            videoUrl: l.videoUrl ?? null,
+            muxPlaybackId: l.muxPlaybackId ?? null,
+          };
+
+          if (l.quiz) {
+            lessonData.quiz = {
+              create: {
+                id: l.quiz.id,
+                title: l.quiz.title,
+                questions: {
+                  create: l.quiz.questions.map((q: any) => ({
+                    id: q.id,
+                    text: q.text,
+                    options: q.options,
+                    answer: q.answer,
+                  })),
+                },
+              },
+            };
+          }
+
+          return lessonData;
+        }),
+      } as any;
+    }
+
+    const created = await this.prisma.course.create({
+      data,
+      include: { lessons: true, tutorial: true } as unknown as any,
+    } as any);
+
+    return created as any;
   }
 }

@@ -6,9 +6,17 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './students/guards/jwt-auth.guard';
 import { CompaniesModule } from './companies/companies.module';
 import { CoursesModule } from './courses/courses.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [StudentsModule, CompaniesModule, CoursesModule],
+  imports: [
+    StudentsModule,
+    CompaniesModule,
+    CoursesModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,

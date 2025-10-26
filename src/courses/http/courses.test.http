@@ -1,0 +1,61 @@
+@env=dev
+# @API_BASE_URL=https://wework-backend.onrender.com
+# @baseUrl={{API_BASE_URL}}
+
+### Create full course (tutorial + lessons + quiz)
+POST http://localhost:3000/courses
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaDVxMWNzczAwMDBnMDI0MWs1dTZmZWYiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJ4cCI6MCwibGV2ZWwiOjEsImNyZWF0ZWRBdCI6IjIwMjUtMTAtMjVUMDM6Mjk6MzMuOTY1WiIsImVucm9sbG1lbnRzIjpbXSwicmV2aWV3cyI6W10sInBheW1lbnRzIjpbXSwiYXBwbGljYXRpb25zIjpbXSwicHJvZ3Jlc3MiOltdLCJpYXQiOjE3NjE0ODIzOTAsImV4cCI6MTc2MjA4NzE5MH0.wlE3k17V9dk69SnqKXDzuCTd56D5FZH5uQ4t4LB8IkQ
+
+
+{
+  "title": "JavaScript for Beginners",
+  "category": "Programming",
+  "level": "BEGINNER",
+  "duration": 3600,
+  "students": 120,
+  "rating": 4.8,
+  "price": 0,
+  "thumbnail": "https://cdn.example.com/js-course.png",
+  "description": "Learn JavaScript from scratch — the language of the web. Build logic, understand data types, and create interactive pages.",
+  "isPublished": true,
+
+  "tutorial": {
+    "title": "Welcome to JavaScript",
+    "content": "JavaScript is the most popular programming language for web development. In this course, you will learn the fundamentals step-by-step and build real skills to create interactive websites.",
+    "videoUrl": "https://cdn.example.com/intro.mp4"
+  },
+
+  "lessons": [
+    {
+      "title": "What is JavaScript?",
+      "duration": 240,
+      "order": 1,
+      "isPreview": true,
+      "content": "JavaScript is a scripting language used to add interactivity to web pages — such as animations, forms, sliders, and dynamic content. It runs inside the browser and works alongside HTML and CSS.\n\nYou will learn:\n- What JavaScript is used for\n- How JS runs in the browser\n- Where JavaScript fits in a webpage",
+      "videoUrl": "https://cdn.example.com/lesson1.mp4",
+
+      "quiz": {
+        "title": "JavaScript Basics",
+        "questions": [
+          {
+            "text": "JavaScript is mainly used for:",
+            "options": ["Styling a webpage", "Adding interactivity", "Structuring content", "Hosting a server"],
+            "answer": "Adding interactivity"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Variables and Data Types",
+      "duration": 300,
+      "order": 2,
+      "isPreview": false,
+      "content": "Variables store values that your program can use and change. In JavaScript, we commonly use `let` and `const`.\n\nExample:\n```js\nlet age = 21;\nconst name = \"John\";\n```\n\nCommon data types include:\n- String\n- Number\n- Boolean\n- Null\n- Undefined\n- Object",
+      "videoUrl": "https://cdn.example.com/lesson2.mp4"
+    }
+  ]
+}
+
+### Verify created course
+GET http://localhost:3000/courses/course_123
