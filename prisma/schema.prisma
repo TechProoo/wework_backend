@@ -51,6 +51,13 @@ enum ProgressStatus {
   COMPLETED
 }
 
+// Course level enum to standardize values used by the frontend
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
 //
 // 🔹 AUTH-LEVEL MODELS
 //
@@ -94,15 +101,20 @@ model Course {
   id          String   @id @default(cuid())
   title       String
   category    String
-  level       String
-  duration    String
+  level       CourseLevel
+  // total duration in seconds (sum of lesson durations)
+  duration    Int      @default(0)
   students    Int      @default(0)
   rating      Float    @default(0)
   price       Float
   thumbnail   String
   description String
+  isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  // optional one-to-one tutorial for the course (auto-created when a course is created)
+  tutorial    Tutorial?
 
   enrollments Enrollment[]
   lessons     Lesson[]
@@ -113,16 +125,33 @@ model Lesson {
   id            String  @id @default(cuid())
   courseId      String
   title         String
-  duration      String
+  // duration in seconds
+  duration      Int     @default(0)
   order         Int     @default(0)
   isPreview     Boolean @default(false)
-  contentUrl    String?
+  content       String?
+  videoUrl      String?
   muxPlaybackId String?
   quizId        String? @unique  // ✅ make unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   course   Course @relation(fields: [courseId], references: [id])
   quiz     Quiz?  @relation(fields: [quizId], references: [id])
   progress Progress[]
+}
+
+// A short tutorial document that is created alongside a Course.
+model Tutorial {
+  id         String   @id @default(cuid())
+  courseId   String   @unique
+  title      String
+  content    String?
+  videoUrl   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id])
 }
 
 
