@@ -9,15 +9,15 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaDVxMWNzc
 
 
 {
-  "title": "JavaScript for Beginners",
-  "category": "Programming",
+  "title": "Introduction to AI",
+  "category": "AI",
   "level": "BEGINNER",
-  "duration": 3600,
+  "duration": 2500,
   "students": 120,
   "rating": 4.8,
   "price": 0,
-  "thumbnail": "https://cdn.example.com/js-course.png",
-  "description": "Learn JavaScript from scratch — the language of the web. Build logic, understand data types, and create interactive pages.",
+  "thumbnail": "https://example.com/ai-course.png",
+  "description": "Learn the fundamentals of Artificial Intelligence",
   "isPublished": true,
 
   "tutorial": {
@@ -27,35 +27,182 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaDVxMWNzc
   },
 
   "lessons": [
-    {
-      "title": "What is JavaScript?",
-      "duration": 240,
-      "order": 1,
-      "isPreview": true,
-      "content": "JavaScript is a scripting language used to add interactivity to web pages — such as animations, forms, sliders, and dynamic content. It runs inside the browser and works alongside HTML and CSS.\n\nYou will learn:\n- What JavaScript is used for\n- How JS runs in the browser\n- Where JavaScript fits in a webpage",
-      "videoUrl": "https://cdn.example.com/lesson1.mp4",
-
-      "quiz": {
-        "title": "JavaScript Basics",
-        "questions": [
-          {
-            "text": "JavaScript is mainly used for:",
-            "options": ["Styling a webpage", "Adding interactivity", "Structuring content", "Hosting a server"],
-            "answer": "Adding interactivity"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Variables and Data Types",
-      "duration": 300,
-      "order": 2,
-      "isPreview": false,
-      "content": "Variables store values that your program can use and change. In JavaScript, we commonly use `let` and `const`.\n\nExample:\n```js\nlet age = 21;\nconst name = \"John\";\n```\n\nCommon data types include:\n- String\n- Number\n- Boolean\n- Null\n- Undefined\n- Object",
-      "videoUrl": "https://cdn.example.com/lesson2.mp4"
+  {
+    "title": "Lesson 1 - Introduction to Artificial Intelligence",
+    "order": 1,
+    "duration": 15,
+    "isPreview": true,
+    "content": "Artificial Intelligence (AI) is a branch of computer science focused on creating machines capable of performing tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation. The term was coined by John McCarthy in 1956 at the Dartmouth Conference, which is recognized as the birthplace of AI as a formal field of study.\n\nIn this lesson, you’ll explore the evolution of AI, from early rule-based systems to today’s data-driven neural networks. Key historical milestones include the creation of the first expert systems in the 1970s, the AI winters of the 1980s and 1990s, and the deep learning revolution in the 2010s driven by advances in computing power and data availability.\n\nBy the end of this lesson, you’ll understand the distinctions between narrow AI (task-specific systems) and general AI (human-level intelligence), and recognize major application areas such as robotics, healthcare, and finance.",
+    "videoUrl": "https://cdn.schoolplatform.com/videos/ai-introduction.mp4",
+    "quiz": {
+      "title": "AI Basics Quiz",
+      "questions": [
+        {
+          "text": "Who coined the term 'Artificial Intelligence'?",
+          "options": ["Alan Turing", "John McCarthy", "Geoffrey Hinton", "Andrew Ng"],
+          "answer": "John McCarthy"
+        },
+        {
+          "text": "Which of the following best describes narrow AI?",
+          "options": [
+            "AI that performs a single task well",
+            "AI that can generalize across all human tasks",
+            "AI that builds robots only",
+            "AI that simulates emotions"
+          ],
+          "answer": "AI that performs a single task well"
+        },
+        {
+          "text": "What event is considered the birth of AI as an academic field?",
+          "options": [
+            "The Dartmouth Conference in 1956",
+            "The launch of Google in 1998",
+            "The first iPhone release in 2007",
+            "The discovery of deep learning in 2012"
+          ],
+          "answer": "The Dartmouth Conference in 1956"
+        }
+      ]
     }
-  ]
+  },
+  {
+    "title": "Lesson 2 - Machine Learning Fundamentals",
+    "order": 2,
+    "duration": 25,
+    "isPreview": false,
+    "content": "Machine Learning (ML) is a subset of AI focused on developing algorithms that can learn from and make predictions based on data. Instead of being explicitly programmed for each task, ML models improve their performance as they are exposed to more data.\n\nThere are three main types of machine learning:\n1. **Supervised Learning** — Uses labeled data to train models for tasks like classification and regression. Examples include predicting housing prices or identifying spam emails.\n2. **Unsupervised Learning** — Discovers hidden structures in unlabeled data using methods like clustering (K-Means) or dimensionality reduction (PCA).\n3. **Reinforcement Learning** — Involves agents that learn to make decisions by receiving rewards or penalties. This method powers systems like AlphaGo and robotic control algorithms.\n\nBy the end of this lesson, you will understand key ML concepts like training, testing, overfitting, and evaluation metrics such as accuracy, precision, recall, and F1 score.",
+    "videoUrl": "https://cdn.schoolplatform.com/videos/ml-fundamentals.mp4",
+    "quiz": {
+      "title": "Machine Learning Quiz",
+      "questions": [
+        {
+          "text": "Which learning type uses labeled data?",
+          "options": ["Unsupervised Learning", "Supervised Learning", "Reinforcement Learning", "Transfer Learning"],
+          "answer": "Supervised Learning"
+        },
+        {
+          "text": "What is overfitting?",
+          "options": [
+            "When a model performs well on training data but poorly on new data",
+            "When a model performs poorly on all data",
+            "When the dataset has too many missing values",
+            "When training data is insufficient"
+          ],
+          "answer": "When a model performs well on training data but poorly on new data"
+        },
+        {
+          "text": "Which algorithm is commonly used for clustering?",
+          "options": ["K-Means", "Linear Regression", "Decision Tree", "Naive Bayes"],
+          "answer": "K-Means"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Lesson 3 - Neural Networks and Deep Learning",
+    "order": 3,
+    "duration": 30,
+    "isPreview": false,
+    "content": "Neural Networks are inspired by the human brain’s interconnected neurons. Each neuron receives input, processes it through an activation function, and passes it to the next layer. A network typically consists of an input layer, hidden layers, and an output layer. Training occurs via backpropagation — a process that adjusts weights to minimize error using gradient descent.\n\nDeep Learning expands on this by adding multiple hidden layers, allowing the model to learn complex hierarchical patterns. Convolutional Neural Networks (CNNs) are widely used for image recognition tasks, while Recurrent Neural Networks (RNNs) and Transformers are essential for sequential data such as language and speech.\n\nThis lesson also covers essential tools such as TensorFlow, PyTorch, and Keras, which simplify the process of building and training deep learning models. You will learn the roles of GPUs, activation functions like ReLU and Softmax, and regularization techniques to prevent overfitting.",
+    "videoUrl": "https://cdn.schoolplatform.com/videos/deep-learning.mp4",
+    "quiz": {
+      "title": "Deep Learning Quiz",
+      "questions": [
+        {
+          "text": "What algorithm is used to minimize errors in neural networks?",
+          "options": ["Gradient Descent", "Bayesian Estimation", "Monte Carlo Simulation", "Random Sampling"],
+          "answer": "Gradient Descent"
+        },
+        {
+          "text": "Which neural network architecture is best suited for image recognition?",
+          "options": ["CNN", "RNN", "SVM", "KNN"],
+          "answer": "CNN"
+        },
+        {
+          "text": "What does ReLU stand for?",
+          "options": [
+            "Rectified Linear Unit",
+            "Recursive Learning Unit",
+            "Reduced Learning Utility",
+            "Random Layer Update"
+          ],
+          "answer": "Rectified Linear Unit"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Lesson 4 - AI in the Real World and Ethics",
+    "order": 4,
+    "duration": 22,
+    "isPreview": false,
+    "content": "AI is transforming every major industry. In **healthcare**, AI models detect diseases like cancer through image analysis. In **finance**, algorithms power fraud detection and high-frequency trading. **Retail** uses recommendation engines to personalize shopping experiences, while **transportation** leverages AI for autonomous vehicles.\n\nHowever, with power comes responsibility. Ethical issues such as data privacy, algorithmic bias, and accountability are central to AI governance. Biased training data can result in discriminatory systems, and the lack of transparency ('black box' models) raises concerns about fairness and trust.\n\nThis lesson also introduces the concept of **Explainable AI (XAI)**, which focuses on making model decisions interpretable. You’ll learn about regulatory frameworks like the EU AI Act and global initiatives led by the OECD, UNESCO, and the Partnership on AI to promote ethical development and deployment of AI technologies.",
+    "videoUrl": "https://cdn.schoolplatform.com/videos/ai-ethics.mp4",
+    "quiz": {
+      "title": "AI Ethics Quiz",
+      "questions": [
+        {
+          "text": "Which of the following is a core principle of Responsible AI?",
+          "options": ["Transparency", "Secrecy", "Bias", "Data Hoarding"],
+          "answer": "Transparency"
+        },
+        {
+          "text": "What does XAI stand for?",
+          "options": [
+            "Explainable Artificial Intelligence",
+            "Extended AI Interface",
+            "Experimental Algorithmic Intelligence",
+            "External Automated Input"
+          ],
+          "answer": "Explainable Artificial Intelligence"
+        },
+        {
+          "text": "Which organization is known for developing AI ethics guidelines?",
+          "options": ["UNESCO", "IEEE", "NATO", "IMF"],
+          "answer": "UNESCO"
+        }
+      ]
+    }
+  },
+  {
+    "title": "Lesson 5 - Building Your First AI Project",
+    "order": 5,
+    "duration": 35,
+    "isPreview": false,
+    "content": "In this capstone lesson, students will apply everything they’ve learned to create a small AI project using Python and open-source libraries. You’ll build a supervised learning model to predict housing prices using the Scikit-learn library.\n\nThe steps include:\n1. **Data Collection & Preprocessing:** Using datasets from Kaggle or UCI Machine Learning Repository.\n2. **Exploratory Data Analysis (EDA):** Visualizing trends using Matplotlib and Seaborn.\n3. **Model Training:** Implementing Linear Regression, Decision Tree, and Random Forest models.\n4. **Evaluation:** Measuring performance using RMSE (Root Mean Squared Error) and R² score.\n5. **Optimization:** Hyperparameter tuning with GridSearchCV.\n\nThe lesson ends with a brief overview of deployment options using Flask, FastAPI, or cloud-based services like AWS Sagemaker. You’ll gain a practical understanding of how AI models move from notebooks to production environments.",
+    "videoUrl": "https://cdn.schoolplatform.com/videos/building-ai-project.mp4",
+    "quiz": {
+      "title": "AI Project Implementation Quiz",
+      "questions": [
+        {
+          "text": "Which Python library is commonly used for machine learning?",
+          "options": ["Scikit-learn", "NumPy", "Flask", "TensorBoard"],
+          "answer": "Scikit-learn"
+        },
+        {
+          "text": "Which metric measures how well a regression model fits the data?",
+          "options": ["Accuracy", "F1 Score", "R² Score", "Precision"],
+          "answer": "R² Score"
+        },
+        {
+          "text": "What is the purpose of GridSearchCV?",
+          "options": [
+            "Hyperparameter tuning",
+            "Feature extraction",
+            "Model visualization",
+            "Data normalization"
+          ],
+          "answer": "Hyperparameter tuning"
+        }
+      ]
+    }
+  }
+]
+
 }
 
 ### Verify created course
-GET http://localhost:3000/courses/course_123
+
+GET http://localhost:3000/courses
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaDVxMWNzczAwMDBnMDI0MWs1dTZmZWYiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJ4cCI6MCwibGV2ZWwiOjEsImNyZWF0ZWRBdCI6IjIwMjUtMTAtMjVUMDM6Mjk6MzMuOTY1WiIsImVucm9sbG1lbnRzIjpbXSwicmV2aWV3cyI6W10sInBheW1lbnRzIjpbXSwiYXBwbGljYXRpb25zIjpbXSwicHJvZ3Jlc3MiOltdLCJpYXQiOjE3NjE0ODIzOTAsImV4cCI6MTc2MjA4NzE5MH0.wlE3k17V9dk69SnqKXDzuCTd56D5FZH5uQ4t4LB8IkQ
+

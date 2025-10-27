@@ -126,6 +126,139 @@ export class CoursesService {
     return created as any;
   }
 
+  /* Tutorial management */
+  async createTutorial(courseId: string, dto: any) {
+    const { title, content, videoUrl } = dto;
+    // create tutorial linked to course
+    const created = await this.prisma.tutorial.create({
+      data: {
+        courseId,
+        title,
+        content: content ?? null,
+        videoUrl: videoUrl ?? null,
+      },
+    } as any);
+    return created as any;
+  }
+
+  async updateTutorial(courseId: string, dto: any) {
+    const data: any = {};
+    if (dto.title !== undefined) data.title = dto.title;
+    if (dto.content !== undefined) data.content = dto.content;
+    if (dto.videoUrl !== undefined) data.videoUrl = dto.videoUrl;
+
+    const updated = await this.prisma.tutorial.update({
+      where: { courseId },
+      data,
+    } as any);
+    return updated as any;
+  }
+
+  async deleteTutorial(courseId: string) {
+    const deleted = await this.prisma.tutorial.delete({
+      where: { courseId },
+    } as any);
+    return deleted as any;
+  }
+
+  /* Lessons management */
+  async listLessons(courseId: string) {
+    return this.prisma.lesson.findMany({
+      where: { courseId },
+      orderBy: { order: 'asc' },
+    } as any);
+  }
+
+  async getLesson(lessonId: string) {
+    return this.prisma.lesson.findUnique({ where: { id: lessonId } } as any);
+  }
+
+  async updateLesson(lessonId: string, dto: any) {
+    // if duration changes, adjust course duration
+    const existing = await this.prisma.lesson.findUnique({
+      where: { id: lessonId },
+    } as any);
+    if (!existing) throw new BadRequestException('Lesson not found');
+
+    const data: any = {};
+    if (dto.title !== undefined) data.title = dto.title;
+    if (dto.order !== undefined) data.order = dto.order;
+    if (dto.duration !== undefined) data.duration = Number(dto.duration) || 0;
+    if (dto.isPreview !== undefined) data.isPreview = dto.isPreview;
+    if (dto.content !== undefined) data.content = dto.content;
+    if (dto.videoUrl !== undefined) data.videoUrl = dto.videoUrl;
+    if (dto.muxPlaybackId !== undefined) data.muxPlaybackId = dto.muxPlaybackId;
+
+    const updated = await this.prisma.lesson.update({
+      where: { id: lessonId },
+      data,
+    } as any);
+
+    if (data.duration !== undefined) {
+      const delta = updated.duration - existing.duration;
+      if (delta !== 0) {
+        await this.prisma.course.update({
+          where: { id: existing.courseId },
+          data: { duration: { increment: delta } },
+        } as any);
+      }
+    }
+
+    return updated as any;
+  }
+
+  async deleteLesson(lessonId: string) {
+    const existing = await this.prisma.lesson.findUnique({
+      where: { id: lessonId },
+    } as any);
+    if (!existing) throw new BadRequestException('Lesson not found');
+
+    const deleted = await this.prisma.lesson.delete({
+      where: { id: lessonId },
+    } as any);
+    // decrement course duration
+    if (deleted.duration) {
+      await this.prisma.course.update({
+        where: { id: deleted.courseId },
+        data: { duration: { decrement: deleted.duration } },
+      } as any);
+    }
+    return deleted as any;
+  }
+
+  /* Quiz management for a lesson */
+  async createQuizForLesson(lessonId: string, dto: any) {
+    const { title, questions } = dto;
+    const createdQuiz = await this.prisma.quiz.create({
+      data: {
+        title,
+        questions: {
+          create: (questions || []).map((q: any) => ({
+            id: q.id,
+            text: q.text,
+            options: q.options,
+            answer: q.answer,
+          })),
+        },
+      },
+    } as any);
+
+    // attach quiz to lesson
+    await this.prisma.lesson.update({
+      where: { id: lessonId },
+      data: { quizId: createdQuiz.id },
+    } as any);
+    return createdQuiz as any;
+  }
+
+  /* Publish toggle */
+  async setPublished(courseId: string, isPublished: boolean) {
+    return this.prisma.course.update({
+      where: { id: courseId },
+      data: { isPublished },
+    } as any);
+  }
+
   findAll() {
     return this.prisma.course.findMany({
       include: { lessons: true, tutorial: true } as unknown as any,
