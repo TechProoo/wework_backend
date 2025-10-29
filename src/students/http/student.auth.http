@@ -1,5 +1,5 @@
 ### Student sign-up (matches CreateStudentDto)
-# POST https://wework-backend.onrender.com
+POST https://wework-backend.onrender.com
 # /students/signup
 Content-Type: application/json
 

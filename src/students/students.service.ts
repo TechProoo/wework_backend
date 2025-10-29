@@ -87,7 +87,7 @@ export class StudentsService {
 
   async login(
     loginStudentDto: LoginStudentDto,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; data: StudentData }> {
     const { email, password } = loginStudentDto;
 
     const user = await this.prisma.student.findUnique({
@@ -114,6 +114,7 @@ export class StudentsService {
     const { passwordHash, ...safeUser } = user;
     return {
       access_token: await this.jwtService.signAsync(safeUser),
+      data: safeUser,
     };
   }
 
