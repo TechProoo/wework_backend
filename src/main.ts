@@ -2,13 +2,11 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-// cookie-parser v1 exports a CommonJS function. Use require() to ensure runtime import
-const cookieParser = require('cookie-parser');
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  // parse cookies so req.cookies is available to strategies and guards
+  // Parse cookies so Passport can read the HttpOnly accessToken cookie
   app.use(cookieParser());
 
   app.enableCors({

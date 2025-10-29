@@ -76,6 +76,9 @@ export class CompaniesService {
     const { passwordHash, ...safeCompany } = company;
 
     const access_token = await this.jwtService.signAsync(safeCompany);
-    return { access_token };
+    return {
+      access_token: access_token,
+      data: safeCompany,
+    };
   }
 }

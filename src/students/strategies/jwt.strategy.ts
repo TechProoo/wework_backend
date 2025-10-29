@@ -10,10 +10,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     super({
+      // Try cookie first (HttpOnly cookie set at login), then fall back to Authorization header
       jwtFromRequest: ExtractJwt.fromExtractors([
-        // Try cookie first (HttpOnly cookie set on login)
-        (req: any) => req?.cookies?.accessToken,
-        // Fallback to Authorization header if present
+        (req: any) => req?.cookies?.accessToken ?? null,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
       ignoreExpiration: false,
