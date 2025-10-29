@@ -130,7 +130,7 @@ export class CoursesService {
   async createTutorial(courseId: string, dto: any) {
     const { title, content, videoUrl } = dto;
     // create tutorial linked to course
-  const created = await (this.prisma as any).tutorial.create({
+    const created = await (this.prisma as any).tutorial.create({
       data: {
         courseId,
         title,
@@ -147,7 +147,7 @@ export class CoursesService {
     if (dto.content !== undefined) data.content = dto.content;
     if (dto.videoUrl !== undefined) data.videoUrl = dto.videoUrl;
 
-  const updated = await (this.prisma as any).tutorial.update({
+    const updated = await (this.prisma as any).tutorial.update({
       where: { courseId },
       data,
     } as any);
@@ -155,7 +155,7 @@ export class CoursesService {
   }
 
   async deleteTutorial(courseId: string) {
-  const deleted = await (this.prisma as any).tutorial.delete({
+    const deleted = await (this.prisma as any).tutorial.delete({
       where: { courseId },
     } as any);
     return deleted as any;
@@ -195,7 +195,8 @@ export class CoursesService {
     } as any);
 
     if (data.duration !== undefined) {
-      const delta = Number(updated.duration || 0) - Number(existing.duration || 0);
+      const delta =
+        Number(updated.duration || 0) - Number(existing.duration || 0);
       if (delta !== 0) {
         await this.prisma.course.update({
           where: { id: existing.courseId },
