@@ -5,6 +5,13 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors({
+    origin: 'http://localhost:5173', // Your Vite frontend URL
+    credentials: true,
+    exposedHeaders: ['Authorization'], // 👈 THIS allows frontend to read Authorization header
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
