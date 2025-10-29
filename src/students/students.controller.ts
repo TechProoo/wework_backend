@@ -71,8 +71,12 @@ export class StudentsController {
   }
 
   @Get('profile')
-  getProfile(@Request() req: { user: any }): any {
-    return req.user;
+  getProfile(@Request() req: any) {
+    return {
+      statusCode: 200,
+      message: 'Profile fetched successfully',
+      data: req.user,
+    };
   }
 
   @Patch('profile')

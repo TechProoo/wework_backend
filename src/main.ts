@@ -2,9 +2,13 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // parse cookies so req.cookies is available to strategies and guards
+  app.use(cookieParser());
 
   app.enableCors({
     origin: 'http://localhost:5173', // Your Vite frontend URL
