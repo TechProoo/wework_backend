@@ -49,7 +49,7 @@ export class StudentsController {
 
     // Set HttpOnly cookie with the access token. This prevents JS access to the token.
     // Use secure flag in production (when behind HTTPS).
-    console.log(token)
+    console.log(token);
     res.cookie('accessToken', token.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -60,6 +60,7 @@ export class StudentsController {
     return {
       statusCode: HttpStatus.OK,
       message: 'Login successful',
+      data: token.data,
     };
   }
 
