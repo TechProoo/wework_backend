@@ -1,5 +1,7 @@
-### Student sign-up (matches CreateStudentDto)
-POST https://wework-backend.onrender.com/students/signup
+@baseUrl = https://wework-backend.onrender.com
+
+### 🧍‍♂️ Student sign-up
+POST {{baseUrl}}/students/signup
 Content-Type: application/json
 
 {
@@ -13,26 +15,27 @@ Content-Type: application/json
 }
 
 
-### Student login (matches LoginStudentDto)
-POST https://wework-backend.onrender.com/students/login
+### 🔐 Student login (stores HttpOnly cookie)
+POST {{baseUrl}}/students/login
 Content-Type: application/json
+Origin: http://localhost:5173
 
 {
   "email": "john.doe@exam.com",
   "password": "StrongPassw0rd!"
 }
 
-### Student profile (requires authentication)
-GET https://wework-backend.onrender.com/students/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaDc1ZTZ6eDAwMDBrMDIyOGhjMXV6aGUiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJ4cCI6MCwibGV2ZWwiOjEsImNyZWF0ZWRBdCI6IjIwMjUtMTAtMjZUMDM6Mjc6MTMuMzg4WiIsImVucm9sbG1lbnRzIjpbXSwicmV2aWV3cyI6W10sInBheW1lbnRzIjpbXSwiYXBwbGljYXRpb25zIjpbXSwicHJvZ3Jlc3MiOltdLCJpYXQiOjE3NjE3NTI3MDAsImV4cCI6MTc2MjM1NzUwMH0.hCF99IpjK2WU5wkPgfm934RkWqrpSQfkknCETCylSrE
-
-### 🚪 Logout 
-POST https://wework-backend.onrender.com/students/logout
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3Jmczl4NzAwMDBmbDdrNjdmaWpteG8iLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJjcmVhdGVkQXQiOiIyMDI1LTEwLTE1VDAzOjMzOjQ3LjcwNVoiLCJlbnJvbGxtZW50cyI6W10sInJldmlld3MiOltdLCJwYXltZW50cyI6W10sImFwcGxpY2F0aW9ucyI6W10sImlhdCI6MTc2MDYzMjM3NCwiZXhwIjoxNzYwNjMyNDM0fQ.3chs0E2POI9oMXyYsD8sN4fO8n11wuL2JkHEyCsOO8k
+### 👤 Get Profile (authenticated using saved cookie)
+GET {{baseUrl}}/students/profile
+Origin: http://localhost:5173
 
 
-PATCH https://wework-backend.onrender.com/students/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3RybXFwdzAwMDBmbDlnMTRqem9pMnIiLCJlbWFpbCI6ImpvaG4uZG9lQGV4YW0uY29tIiwiZmlyc3ROYW1lIjoiSm9obiIsImxhc3ROYW1lIjoiRG9lIiwidW5pdmVyc2l0eSI6IlN0YXRlIFVuaXZlcnNpdHkiLCJtYWpvciI6IkNvbXB1dGVyIFNjaWVuY2UiLCJncmFkdWF0aW9uWWVhciI6IjIwMjYiLCJ4cCI6MCwibGV2ZWwiOjEsImNyZWF0ZWRBdCI6IjIwMjUtMTAtMTZUMTg6NDA6NTcuMjgzWiIsImVucm9sbG1lbnRzIjpbXSwicmV2aWV3cyI6W10sInBheW1lbnRzIjpbXSwiYXBwbGljYXRpb25zIjpbXSwicHJvZ3Jlc3MiOltdLCJpYXQiOjE3NjA2NDAyODcsImV4cCI6MTc2MDY0MDM0N30.ef2Prn2n5Wgg2CpwlC1_7a2seMRDn-9Wpr2TbROUl2E
+### 🚪 Logout (clears cookie)
+POST {{baseUrl}}/students/logout
+
+
+### ✏️ Update profile (still authenticated via cookie)
+PATCH {{baseUrl}}/students/profile
 Content-Type: application/json
 
 {
@@ -41,6 +44,5 @@ Content-Type: application/json
   "university": "New University",
   "major": "Computer Science",
   "graduationYear": "2026",
-  "email": "newemail@example.com",
-  "password": "newpassword123"
+  "email": "newemail@example.com"
 }
