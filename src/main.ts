@@ -9,6 +9,8 @@ async function bootstrap() {
   // Parse cookies so Passport can read the HttpOnly accessToken cookie
   app.use(cookieParser());
 
+  
+
   app.enableCors({
     origin: 'http://localhost:5173', // Your Vite frontend URL
     credentials: true,
