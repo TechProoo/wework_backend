@@ -48,6 +48,18 @@ export class StudentsController {
   ) {
     const token = await this.studentsService.login(loginStudentDto);
 
+    // Debug: log a short prefix of the token being issued so we can trace
+    // whether the same token gets sent back in subsequent requests.
+    try {
+      const preview =
+        typeof token.access_token === 'string'
+          ? token.access_token.slice(0, 40) + '...'
+          : String(token.access_token);
+      console.log('[students.controller] issuing access token:', preview);
+    } catch (err) {
+      console.error('[students.controller] token preview error', err);
+    }
+
     // Set HttpOnly cookie with the access token. This prevents JS access to the token.
     // Use secure flag in production (when behind HTTPS).
     res.cookie('accessToken', token.access_token, {

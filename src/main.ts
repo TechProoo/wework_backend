@@ -9,12 +9,23 @@ async function bootstrap() {
   // Parse cookies so Passport can read the HttpOnly accessToken cookie
   app.use(cookieParser());
 
-  
-
   app.enableCors({
-    origin: 'http://localhost:5173', // Your Vite frontend URL
+    origin: 'http://localhost:5173',
     credentials: true,
-    exposedHeaders: ['Authorization'], // 👈 THIS allows frontend to read Authorization header
+  });
+
+  // Simple request logger to verify incoming requests reach the server.
+  // Logs method, url and whether a Cookie header is present (does NOT log token values).
+  app.use((req, _res, next) => {
+    try {
+      const hasCookie = !!req.headers?.cookie;
+      console.log(
+        `HTTP ${req.method} ${req.url} - cookie-present=${hasCookie}`,
+      );
+    } catch (err) {
+      console.log('request-logger error', err);
+    }
+    next();
   });
 
   app.useGlobalPipes(

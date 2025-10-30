@@ -1,5 +1,5 @@
-@baseUrl = https://wework-backend.onrender.com
-# @baseUrl = http://localhost:3000
+# @baseUrl = https://wework-backend.onrender.com
+@baseUrl = http://localhost:3000
 
 ### 🧍‍♂️ Student sign-up
 POST {{baseUrl}}/students/signup
