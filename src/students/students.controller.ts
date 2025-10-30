@@ -18,6 +18,7 @@ import { Public } from '../decorators/public.decorator';
 // import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignupResponse } from './interfaces/students.auth';
 import type { Response } from 'express';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Controller('students')
 export class StudentsController {

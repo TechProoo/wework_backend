@@ -1,12 +1,15 @@
 @baseUrl = https://wework-backend.onrender.com
+# @baseUrl = http://localhost:3000
 
 ### 🧍‍♂️ Student sign-up
 POST {{baseUrl}}/students/signup
 Content-Type: application/json
+Origin: http://localhost:5173
+
 
 {
-  "email": "john.doe@exam.com",
-  "password": "StrongPassw0rd!",
+  "email": "ola@gmail.com",
+  "password": "123456789",
   "firstName": "John",
   "lastName": "Doe",
   "university": "State University",
@@ -28,7 +31,7 @@ Origin: http://localhost:5173
 ### 👤 Get Profile (authenticated using saved cookie)
 GET {{baseUrl}}/students/profile
 Origin: http://localhost:5173
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaGNtNnNucTAwMDBnbzJtNm5wcnJvNXgiLCJlbWFpbCI6Im9sYW9sdXdhb3lldGlib0BnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJKb2huIiwibGFzdE5hbWUiOiJEb2UiLCJ1bml2ZXJzaXR5IjoiU3RhdGUgVW5pdmVyc2l0eSIsIm1ham9yIjoiQ29tcHV0ZXIgU2NpZW5jZSIsImdyYWR1YXRpb25ZZWFyIjoiMjAyNiIsInhwIjowLCJsZXZlbCI6MSwiY3JlYXRlZEF0IjoiMjAyNS0xMC0yOVQyMzoxNjoxMi41NjZaIiwiZW5yb2xsbWVudHMiOltdLCJyZXZpZXdzIjpbXSwicGF5bWVudHMiOltdLCJhcHBsaWNhdGlvbnMiOltdLCJwcm9ncmVzcyI6W10sImlhdCI6MTc2MTc4NDE4OSwiZXhwIjoxNzYyMzg4OTg5fQ.DmTuT4xQxvPL0mwHaFQwLc0XshsCwrDauA-6OdJx77Y
 
 ### 🚪 Logout (clears cookie)
 POST {{baseUrl}}/students/logout
