@@ -85,10 +85,6 @@ export class StudentsController {
 
   @Get('profile')
   getProfile(@Request() req: any) {
-    console.log('🍪 Cookies received from client:', req.cookies);
-    console.log('🔑 Raw cookie header:', req.headers.cookie);
-    console.log('👤 req.user:', req.user);
-
     return {
       statusCode: 200,
       message: 'Profile fetched successfully',
