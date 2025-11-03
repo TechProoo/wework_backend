@@ -48,6 +48,11 @@ export class CompaniesController {
     return { message: 'Logout successful ' };
   }
 
+  @Post('job')
+  creatJob() {
+    return { message: 'Job created successfully' };
+  }
+
   @Get('profile')
   getProfile(@Request() req: { user: any }): any {
     return req.user;
