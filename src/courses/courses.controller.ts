@@ -97,6 +97,17 @@ export class CoursesController {
     };
   }
 
+  @Public()
+  @Get('count')
+  async getTotalCourses() {
+    const total = await this.coursesService.getTotalCourses();
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Total Courses fetched successfully',
+      data: { total },
+    };
+  }
+
   // 🔹 Get single course
   @Public()
   @Get(':id')
@@ -212,16 +223,5 @@ export class CoursesController {
   @Post('import')
   import(@Body() payload: any) {
     return this.coursesService.importCourse(payload as any);
-  }
-
-  @Public()
-  @Get('count')
-  async getTotalCourses() {
-    const total = await this.coursesService.getTotalCourses();
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Total Courses fetched successfully',
-      data: { total },
-    };
   }
 }

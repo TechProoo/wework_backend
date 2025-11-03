@@ -194,7 +194,6 @@ export class StudentsService {
         major: true,
         graduationYear: true,
         createdAt: true,
-        updatedAt: true,
       },
     } as any);
   }
@@ -211,7 +210,6 @@ export class StudentsService {
         major: true,
         graduationYear: true,
         createdAt: true,
-        updatedAt: true,
       },
     } as any);
   }

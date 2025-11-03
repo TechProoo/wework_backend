@@ -93,6 +93,8 @@ export class StudentsController {
     };
   }
 
+  @Public()
+  @Public()
   @Get()
   async findAll() {
     const data = await this.studentsService.findAll();
@@ -103,6 +105,19 @@ export class StudentsController {
     };
   }
 
+  @Public()
+  @Public()
+  @Get('count')
+  async getTotalUsers() {
+    const total = await this.studentsService.getTotalUsers();
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Total students fetched successfully',
+      data: { total },
+    };
+  }
+
+  @Public()
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const data = await this.studentsService.findOne(id);
@@ -128,16 +143,6 @@ export class StudentsController {
       statusCode: HttpStatus.OK,
       message: 'Profile updated successfully',
       data: updatedStudent,
-    };
-  }
-
-  @Get('count')
-  async getTotalUsers() {
-    const total = await this.studentsService.getTotalUsers();
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Total students fetched successfully',
-      data: { total },
     };
   }
 }
