@@ -86,6 +86,7 @@ export class CoursesController {
   }
 
   // 🔹 Get all courses
+  @Public()
   @Get()
   async findAll() {
     const data = await this.coursesService.findAll();
@@ -97,6 +98,7 @@ export class CoursesController {
   }
 
   // 🔹 Get single course
+  @Public()
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const data = await this.coursesService.findOne(id);
@@ -108,6 +110,7 @@ export class CoursesController {
   }
 
   // 🔹 Update course (metadata only)
+  @Public()
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -122,6 +125,7 @@ export class CoursesController {
   }
 
   // 🔹 Delete course
+  @Public()
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const data = await this.coursesService.remove(id);
@@ -133,6 +137,7 @@ export class CoursesController {
   }
 
   // 🔹 Create Lesson
+  @Public()
   @Post(':id/lessons')
   createLesson(
     @Param('id') id: string,
@@ -142,49 +147,59 @@ export class CoursesController {
   }
 
   // 🔹 Tutorial Management
+  @Public()
   @Post(':id/tutorial')
   createTutorial(@Param('id') id: string, @Body() body: any) {
     return this.coursesService.createTutorial(id, body as any);
   }
 
+  @Public()
   @Patch(':id/tutorial')
   updateTutorial(@Param('id') id: string, @Body() body: any) {
     return this.coursesService.updateTutorial(id, body as any);
   }
 
+  @Public()
   @Delete(':id/tutorial')
   deleteTutorial(@Param('id') id: string) {
     return this.coursesService.deleteTutorial(id);
   }
 
   // 🔹 Lesson Endpoints
+
+  @Public()
   @Get(':id/lessons')
   listLessons(@Param('id') id: string) {
     return this.coursesService.listLessons(id);
   }
 
+  @Public()
   @Get('/lessons/:lessonId')
   getLesson(@Param('lessonId') lessonId: string) {
     return this.coursesService.getLesson(lessonId);
   }
 
+  @Public()
   @Patch('/lessons/:lessonId')
   updateLesson(@Param('lessonId') lessonId: string, @Body() body: any) {
     return this.coursesService.updateLesson(lessonId, body as any);
   }
 
+  @Public()
   @Delete('/lessons/:lessonId')
   deleteLesson(@Param('lessonId') lessonId: string) {
     return this.coursesService.deleteLesson(lessonId);
   }
 
   // 🔹 Lesson Quiz
+  @Public()
   @Post('/lessons/:lessonId/quiz')
   createQuiz(@Param('lessonId') lessonId: string, @Body() body: any) {
     return this.coursesService.createQuizForLesson(lessonId, body as any);
   }
 
   // 🔹 Publish Course
+  @Public()
   @Patch(':id/publish')
   setPublished(
     @Param('id') id: string,
@@ -199,6 +214,7 @@ export class CoursesController {
     return this.coursesService.importCourse(payload as any);
   }
 
+  @Public()
   @Get('count')
   async getTotalCourses() {
     const total = await this.coursesService.getTotalCourses();
