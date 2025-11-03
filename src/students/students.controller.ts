@@ -9,6 +9,7 @@ import {
   Request,
   Patch,
   Res,
+  Param,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -92,6 +93,26 @@ export class StudentsController {
     };
   }
 
+  @Get()
+  async findAll() {
+    const data = await this.studentsService.findAll();
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Students retrieved',
+      data,
+    };
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const data = await this.studentsService.findOne(id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Student retrieved',
+      data,
+    };
+  }
+
   @Patch('profile')
   @HttpCode(HttpStatus.OK)
   async updateProfile(
@@ -107,6 +128,16 @@ export class StudentsController {
       statusCode: HttpStatus.OK,
       message: 'Profile updated successfully',
       data: updatedStudent,
+    };
+  }
+
+  @Get('count')
+  async getTotalUsers() {
+    const total = await this.studentsService.getTotalUsers();
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Total students fetched successfully',
+      data: { total },
     };
   }
 }

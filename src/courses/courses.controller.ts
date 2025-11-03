@@ -198,4 +198,14 @@ export class CoursesController {
   import(@Body() payload: any) {
     return this.coursesService.importCourse(payload as any);
   }
+
+  @Get('count')
+  async getTotalCourses() {
+    const total = await this.coursesService.getTotalCourses();
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Total Courses fetched successfully',
+      data: { total },
+    };
+  }
 }

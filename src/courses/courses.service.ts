@@ -407,4 +407,8 @@ export class CoursesService {
 
     return created as any;
   }
+
+  async getTotalCourses(): Promise<number> {
+    return await this.prisma.course.count();
+  }
 }

@@ -177,4 +177,42 @@ export class StudentsService {
     const { passwordHash, ...safeUser } = updatedStudent;
     return safeUser;
   }
+
+  async getTotalUsers(): Promise<number> {
+    return await this.prisma.student.count();
+  }
+
+  // Return basic user list (exclude sensitive fields)
+  async findAll(): Promise<any[]> {
+    return await this.prisma.student.findMany({
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        university: true,
+        major: true,
+        graduationYear: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    } as any);
+  }
+
+  async findOne(id: string): Promise<any | null> {
+    return await this.prisma.student.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        university: true,
+        major: true,
+        graduationYear: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    } as any);
+  }
 }
