@@ -6,16 +6,16 @@ import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // Parse cookies so Passport can read the HttpOnly accessToken cookie
-  app.use(cookieParser());
 
+  // Enable CORS first
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://weworkk.netlify.app/'],
+    origin: ['http://localhost:5173', 'https://weworkk.netlify.app'],
     credentials: true,
   });
 
-  // Simple request logger to verify incoming requests reach the server.
-  // Logs method, url and whether a Cookie header is present (does NOT log token values).
+  // Middleware
+  app.use(cookieParser());
+
   app.use((req, _res, next) => {
     try {
       const hasCookie = !!req.headers?.cookie;
