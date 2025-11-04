@@ -9,7 +9,7 @@ async function bootstrap() {
 
   // Enable CORS first
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://weworkk.netlify.app'],
+    origin: ['http://localhost:5173', 'https://weworkk-delta.vercel.app'],
     credentials: true,
   });
 
