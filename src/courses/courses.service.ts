@@ -252,6 +252,70 @@ export class CoursesService {
     return createdQuiz as any;
   }
 
+  /** Update quiz for a lesson (replace title and replace questions) */
+  async updateQuizForLesson(lessonId: string, dto: any) {
+    const { title, questions } = dto;
+
+    // find quiz id for the lesson
+    const lesson = await this.prisma.lesson.findUnique({
+      where: { id: lessonId },
+    } as any);
+    if (!lesson) throw new BadRequestException('Lesson not found');
+    if (!lesson.quizId)
+      throw new BadRequestException('Quiz not found for lesson');
+
+    const quizId = lesson.quizId;
+
+    // update quiz title
+    const updated = await this.prisma.quiz.update({
+      where: { id: quizId },
+      data: { title },
+    } as any);
+
+    // replace questions: delete existing then create new
+    await this.prisma.question.deleteMany({ where: { quizId } } as any);
+    if (Array.isArray(questions) && questions.length) {
+      for (const q of questions) {
+        await this.prisma.question.create({
+          data: {
+            id: q.id,
+            text: q.text,
+            options: q.options,
+            answer: q.answer,
+            quizId,
+          },
+        } as any);
+      }
+    }
+
+    return updated as any;
+  }
+
+  /** Delete quiz attached to a lesson (and its questions) */
+  async deleteQuizForLesson(lessonId: string) {
+    const lesson = await this.prisma.lesson.findUnique({
+      where: { id: lessonId },
+    } as any);
+    if (!lesson) throw new BadRequestException('Lesson not found');
+    if (!lesson.quizId)
+      throw new BadRequestException('Quiz not found for lesson');
+
+    const quizId = lesson.quizId;
+
+    // delete questions then quiz, and unset lesson.quizId
+    await this.prisma.question.deleteMany({ where: { quizId } } as any);
+    const deleted = await this.prisma.quiz.delete({
+      where: { id: quizId },
+    } as any);
+
+    await this.prisma.lesson.update({
+      where: { id: lessonId },
+      data: { quizId: null },
+    } as any);
+
+    return deleted as any;
+  }
+
   /* Publish toggle */
   async setPublished(courseId: string, isPublished: boolean) {
     return this.prisma.course.update({

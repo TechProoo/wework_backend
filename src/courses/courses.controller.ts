@@ -135,6 +135,37 @@ export class CoursesController {
     };
   }
 
+  // ✅ Upload a single thumbnail image and update course.thumbnail
+  @Public()
+  @Post(':id/thumbnail')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadThumbnail(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    // upload to Cloudinary and update course record
+    const uploadResult = await this.cloudinaryService.uploadFile(
+      file,
+      'courses',
+    );
+    const fileUrl = (uploadResult as any)?.secure_url ?? null;
+    if (!fileUrl) {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Failed to upload thumbnail',
+      };
+    }
+
+    const data = await this.coursesService.update(id, {
+      thumbnail: fileUrl,
+    } as any);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Thumbnail uploaded and course updated',
+      data,
+    };
+  }
+
   // 🔹 Delete course
   @Public()
   @Delete(':id')
@@ -207,6 +238,18 @@ export class CoursesController {
   @Post('/lessons/:lessonId/quiz')
   createQuiz(@Param('lessonId') lessonId: string, @Body() body: any) {
     return this.coursesService.createQuizForLesson(lessonId, body as any);
+  }
+
+  @Public()
+  @Patch('/lessons/:lessonId/quiz')
+  updateQuiz(@Param('lessonId') lessonId: string, @Body() body: any) {
+    return this.coursesService.updateQuizForLesson(lessonId, body as any);
+  }
+
+  @Public()
+  @Delete('/lessons/:lessonId/quiz')
+  deleteQuiz(@Param('lessonId') lessonId: string) {
+    return this.coursesService.deleteQuizForLesson(lessonId);
   }
 
   // 🔹 Publish Course
