@@ -7,10 +7,26 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS first
+  // Enable CORS with a safe allowlist and explicit preflight handling.
+  const allowedOrigins = [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://weworkk-delta.vercel.app',
+  ];
+
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://weworkk-delta.vercel.app'],
+    origin: (origin, callback) => {
+      // allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      console.warn('CORS: blocked origin', origin);
+      return callback(new Error('Not allowed by CORS'), false);
+    },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders:
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     credentials: true,
+    optionsSuccessStatus: 200,
   });
 
   // Middleware
