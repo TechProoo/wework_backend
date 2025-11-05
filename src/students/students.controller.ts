@@ -62,24 +62,22 @@ export class StudentsController {
     }
 
     // Set HttpOnly cookie with the access token. This prevents JS access to the token.
-    // For production (cross-origin from Vercel to Render), we need:
-    // - secure: true (HTTPS only)
-    // - sameSite: 'none' (allow cross-site cookies)
-    // For local dev, use sameSite: 'lax' and secure can be false
-    const isProduction = process.env.NODE_ENV === 'production';
-
+    // For cross-origin scenarios (Vercel frontend → Render backend), we need:
+    // - secure: true (HTTPS only, required for sameSite: 'none')
+    // - sameSite: 'none' (allow cross-site cookies between different domains)
+    // These settings MUST match on both login and logout for the cookie to work properly
     res.cookie('accessToken', token.access_token, {
       httpOnly: true,
-      secure: isProduction, // true in production (HTTPS required)
-      sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
+      secure: true, // Always use secure for deployed apps (HTTPS required)
+      sameSite: 'none', // Always allow cross-site for Vercel → Render
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       path: '/', // Available across all paths
     });
 
     console.log('[students.controller] cookie set with settings:', {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
+      secure: true,
+      sameSite: 'none',
       path: '/',
     });
 
@@ -92,16 +90,15 @@ export class StudentsController {
 
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    const isProduction = process.env.NODE_ENV === 'production';
-
     // Clear the cookie on logout - must match the settings used when setting it
     res.clearCookie('accessToken', {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'none' : 'lax',
+      secure: true, // Must match login cookie settings
+      sameSite: 'none', // Must match login cookie settings
       path: '/',
     });
 
+    console.log('[students.controller] cookie cleared');
     return { message: 'Logout successful' };
   }
 

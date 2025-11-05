@@ -11,7 +11,7 @@ async function bootstrap() {
   const allowedOrigins = [
     'http://localhost:5173',
     'http://localhost:3000',
-    'https://weworkk-delta.vercel.app',
+    'https://weworkk-delta.vercel.app', // Vercel production deployment
   ];
 
   app.enableCors({
