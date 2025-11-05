@@ -7,6 +7,12 @@ import cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Log environment info for debugging
+  console.log('=== BOOTSTRAP INFO ===');
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+  console.log('PORT:', process.env.PORT);
+  console.log('======================');
+
   // Enable CORS with a safe allowlist and explicit preflight handling.
   const allowedOrigins = [
     'http://localhost:5173',
@@ -25,6 +31,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders:
       'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    exposedHeaders: 'Set-Cookie', // Expose Set-Cookie header (though browsers handle it automatically)
     credentials: true,
     optionsSuccessStatus: 200,
   });
@@ -41,20 +48,6 @@ async function bootstrap() {
     } catch (err) {
       console.log('request-logger error', err);
     }
-    next();
-  });
-
-  // Add response logging middleware
-  app.use((req, res, next) => {
-    const originalSend = res.send;
-    res.send = function (data) {
-      console.log(`Response headers for ${req.method} ${req.url}:`, {
-        'set-cookie': res.getHeader('set-cookie'),
-        'access-control-allow-credentials': res.getHeader('access-control-allow-credentials'),
-        'access-control-allow-origin': res.getHeader('access-control-allow-origin'),
-      });
-      return originalSend.call(this, data);
-    };
     next();
   });
 

@@ -82,7 +82,8 @@ export class StudentsController {
     });
 
     // Debug: log the Set-Cookie header that will be sent
-    console.log('[students.controller] Set-Cookie header:', res.getHeader('Set-Cookie'));
+    const setCookieHeader = res.getHeader('Set-Cookie');
+    console.log('[students.controller] Set-Cookie header:', setCookieHeader);
 
     return {
       statusCode: HttpStatus.OK,
