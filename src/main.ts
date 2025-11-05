@@ -44,6 +44,20 @@ async function bootstrap() {
     next();
   });
 
+  // Add response logging middleware
+  app.use((req, res, next) => {
+    const originalSend = res.send;
+    res.send = function (data) {
+      console.log(`Response headers for ${req.method} ${req.url}:`, {
+        'set-cookie': res.getHeader('set-cookie'),
+        'access-control-allow-credentials': res.getHeader('access-control-allow-credentials'),
+        'access-control-allow-origin': res.getHeader('access-control-allow-origin'),
+      });
+      return originalSend.call(this, data);
+    };
+    next();
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

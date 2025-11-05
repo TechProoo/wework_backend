@@ -81,6 +81,9 @@ export class StudentsController {
       path: '/',
     });
 
+    // Debug: log the Set-Cookie header that will be sent
+    console.log('[students.controller] Set-Cookie header:', res.getHeader('Set-Cookie'));
+
     return {
       statusCode: HttpStatus.OK,
       message: 'Login successful',
