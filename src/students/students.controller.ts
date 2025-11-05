@@ -62,12 +62,25 @@ export class StudentsController {
     }
 
     // Set HttpOnly cookie with the access token. This prevents JS access to the token.
-    // Use secure flag in production (when behind HTTPS).
+    // For production (cross-origin from Vercel to Render), we need:
+    // - secure: true (HTTPS only)
+    // - sameSite: 'none' (allow cross-site cookies)
+    // For local dev, use sameSite: 'lax' and secure can be false
+    const isProduction = process.env.NODE_ENV === 'production';
+
     res.cookie('accessToken', token.access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
+      secure: isProduction, // true in production (HTTPS required)
+      sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-origin in production
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      path: '/', // Available across all paths
+    });
+
+    console.log('[students.controller] cookie set with settings:', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      path: '/',
     });
 
     return {
@@ -79,8 +92,16 @@ export class StudentsController {
 
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    // Clear the cookie on logout
-    res.clearCookie('accessToken', { httpOnly: true, sameSite: 'lax' });
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // Clear the cookie on logout - must match the settings used when setting it
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
+      path: '/',
+    });
+
     return { message: 'Logout successful' };
   }
 
