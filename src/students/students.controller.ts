@@ -74,8 +74,9 @@ export class StudentsController {
     const isProduction = process.env.NODE_ENV === 'production';
     const cookieOptions: any = {
       httpOnly: true,
-      secure: true, // Required for sameSite: 'none'
-      sameSite: 'none',
+      // Only set secure and sameSite='none' in production where HTTPS is guaranteed.
+      secure: Boolean(isProduction),
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days for better persistence
       path: '/',
     };
@@ -90,6 +91,10 @@ export class StudentsController {
 
     // Set HttpOnly cookie with the access token
     res.cookie('accessToken', token.access_token, cookieOptions);
+
+    // Add a debug header the frontend can read to confirm the server attempted to set the cookie.
+    // Browsers won't expose Set-Cookie to JS, so this header helps frontend debugging.
+    res.setHeader('X-Auth-Cookie', '1');
 
     // Also set CORS headers explicitly in the response
     res.header('Access-Control-Allow-Credentials', 'true');
@@ -114,12 +119,15 @@ export class StudentsController {
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
     // Clear the cookie on logout - must match the settings used when setting it
-    res.clearCookie('accessToken', {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const clearOpts: any = {
       httpOnly: true,
-      secure: true, // Must match login cookie settings
-      sameSite: 'none', // Must match login cookie settings
+      secure: Boolean(isProduction),
+      sameSite: isProduction ? 'none' : 'lax',
       path: '/',
-    });
+    };
+
+    res.clearCookie('accessToken', clearOpts);
 
     console.log('[students.controller] cookie cleared');
     return {
