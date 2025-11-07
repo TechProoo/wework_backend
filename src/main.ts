@@ -58,7 +58,7 @@ async function bootstrap() {
       'Origin',
       'X-Requested-With',
     ],
-    exposedHeaders: ['Set-Cookie'],
+    exposedHeaders: ['Set-Cookie', 'X-Auth-Cookie'],
     maxAge: 86400, // Cache preflight for 24 hours
     optionsSuccessStatus: 200,
     preflightContinue: false,
