@@ -378,4 +378,8 @@ export class CompaniesService {
 
     return applications;
   }
+
+  async getTotalCompanies(): Promise<number> {
+    return await this.prisma.company.count();
+  }
 }

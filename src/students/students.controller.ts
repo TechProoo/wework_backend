@@ -191,7 +191,6 @@ export class StudentsController {
   }
 
   @Public()
-  @Public()
   @Get('count')
   async getTotalUsers() {
     const total = await this.studentsService.getTotalUsers();

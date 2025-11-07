@@ -286,4 +286,16 @@ export class CompaniesController {
       data: applications,
     };
   }
+
+  @Public()
+  @Get('count')
+  async getAllCompanies() {
+    const total = await this.companiesService.getTotalCompanies();
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Total students fetched successfully',
+      data: { total },
+    };
+  }
 }

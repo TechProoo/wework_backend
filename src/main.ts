@@ -31,6 +31,7 @@ async function bootstrap() {
     'http://localhost:5173',
     'http://localhost:3000',
     'https://weworkk-delta.vercel.app',
+    'wework-admin.vercel.app',
   ];
 
   app.enableCors({
