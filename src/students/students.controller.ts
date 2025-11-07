@@ -119,15 +119,21 @@ export class StudentsController {
   getProfile(@Request() req: any) {
     try {
       console.log('[students.controller] getProfile called');
-      console.log('[students.controller] req.user:', req.user ? 'present' : 'missing');
-      
+      console.log(
+        '[students.controller] req.user:',
+        req.user ? 'present' : 'missing',
+      );
+
       if (!req.user) {
         console.error('[students.controller] getProfile: no user in request');
         throw new UnauthorizedException('User not authenticated');
       }
 
-      console.log('[students.controller] getProfile: returning user profile for', req.user.email);
-      
+      console.log(
+        '[students.controller] getProfile: returning user profile for',
+        req.user.email,
+      );
+
       return {
         statusCode: HttpStatus.OK,
         message: 'Profile fetched successfully',
