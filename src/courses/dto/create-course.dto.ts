@@ -10,19 +10,6 @@ import {
 } from 'class-validator';
 import { CreateLessonDto } from './create-lesson.dto';
 
-export class CreateTutorialDto {
-  @IsString()
-  title: string;
-
-  @IsOptional()
-  @IsString()
-  content?: string | null;
-
-  @IsOptional()
-  @IsString()
-  videoUrl?: string | null;
-}
-
 export class CreateCourseDto {
   @IsString()
   title: string;
@@ -51,24 +38,6 @@ export class CreateCourseDto {
   @IsOptional()
   @IsString()
   description?: string;
-
-  // optional legacy flat tutorial fields
-  @IsOptional()
-  @IsString()
-  tutorialTitle?: string;
-
-  @IsOptional()
-  @IsString()
-  tutorialContent?: string;
-
-  @IsOptional()
-  @IsString()
-  tutorialVideoUrl?: string;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => CreateTutorialDto)
-  tutorial?: CreateTutorialDto;
 
   // optional lessons to create with the course
   @IsOptional()

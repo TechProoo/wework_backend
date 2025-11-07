@@ -115,9 +115,6 @@ model Course {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // optional one-to-one tutorial for the course (auto-created when a course is created)
-  tutorial    Tutorial?
-
   enrollments Enrollment[]
   lessons     Lesson[]
   reviews     Review[]
@@ -141,19 +138,6 @@ model Lesson {
   course   Course @relation(fields: [courseId], references: [id])
   quiz     Quiz?  @relation(fields: [quizId], references: [id])
   progress Progress[]
-}
-
-// A short tutorial document that is created alongside a Course.
-model Tutorial {
-  id         String   @id @default(cuid())
-  courseId   String   @unique
-  title      String
-  content    String?
-  videoUrl   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  course Course @relation(fields: [courseId], references: [id])
 }
 
 

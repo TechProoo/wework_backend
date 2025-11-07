@@ -12,7 +12,7 @@ export class CoursesService {
   }
 
   /**
-   * Create a course. If tutorial data is provided, create a Tutorial linked to the course.
+   * Create a course with optional lessons.
    */
   async create(createCourseDto: CreateCourseDto) {
     const {
@@ -23,12 +23,6 @@ export class CoursesService {
       price,
       thumbnail,
       description,
-      // legacy flat tutorial fields
-      tutorialTitle,
-      tutorialContent,
-      tutorialVideoUrl,
-      // new nested
-      tutorial,
       lessons,
     } = createCourseDto as any;
 
@@ -60,26 +54,6 @@ export class CoursesService {
       description: description || '',
       isPublished: false,
     };
-
-    // tutorial: prefer nested object, fall back to legacy flat fields
-    const tutorialObj =
-      tutorial ??
-      (tutorialTitle
-        ? {
-            title: tutorialTitle,
-            content: tutorialContent ?? null,
-            videoUrl: tutorialVideoUrl ?? null,
-          }
-        : null);
-    if (tutorialObj) {
-      data.tutorial = {
-        create: {
-          title: tutorialObj.title ?? `${title} - Tutorial`,
-          content: tutorialObj.content ?? null,
-          videoUrl: tutorialObj.videoUrl ?? null,
-        },
-      };
-    }
 
     // lessons: if incoming lessons, prepare nested create including optional quiz
     if (Array.isArray(lessons) && lessons.length) {
@@ -120,45 +94,10 @@ export class CoursesService {
 
     const created = await this.prisma.course.create({
       data,
-      include: { lessons: true, tutorial: true } as unknown as any,
+      include: { lessons: true } as unknown as any,
     } as any);
 
     return created as any;
-  }
-
-  /* Tutorial management */
-  async createTutorial(courseId: string, dto: any) {
-    const { title, content, videoUrl } = dto;
-    // create tutorial linked to course
-    const created = await (this.prisma as any).tutorial.create({
-      data: {
-        courseId,
-        title,
-        content: content ?? null,
-        videoUrl: videoUrl ?? null,
-      },
-    } as any);
-    return created as any;
-  }
-
-  async updateTutorial(courseId: string, dto: any) {
-    const data: any = {};
-    if (dto.title !== undefined) data.title = dto.title;
-    if (dto.content !== undefined) data.content = dto.content;
-    if (dto.videoUrl !== undefined) data.videoUrl = dto.videoUrl;
-
-    const updated = await (this.prisma as any).tutorial.update({
-      where: { courseId },
-      data,
-    } as any);
-    return updated as any;
-  }
-
-  async deleteTutorial(courseId: string) {
-    const deleted = await (this.prisma as any).tutorial.delete({
-      where: { courseId },
-    } as any);
-    return deleted as any;
   }
 
   /* Lessons management */
@@ -326,14 +265,14 @@ export class CoursesService {
 
   findAll() {
     return this.prisma.course.findMany({
-      include: { lessons: true, tutorial: true } as unknown as any,
+      include: { lessons: true } as unknown as any,
     } as any);
   }
 
   findOne(id: string) {
     return this.prisma.course.findUnique({
       where: { id },
-      include: { lessons: true, tutorial: true } as unknown as any,
+      include: { lessons: true } as unknown as any,
     } as any);
   }
 
@@ -385,7 +324,7 @@ export class CoursesService {
     return lesson;
   }
 
-  /** Import a full course with nested tutorial, lessons and quizzes in one request */
+  /** Import a full course with nested lessons and quizzes in one request */
   async importCourse(payload: any) {
     const {
       id,
@@ -399,7 +338,6 @@ export class CoursesService {
       thumbnail,
       description,
       isPublished,
-      tutorial,
       lessons,
     } = payload;
 
@@ -417,16 +355,6 @@ export class CoursesService {
       description: description ?? '',
       isPublished: !!isPublished,
     };
-
-    if (tutorial) {
-      data.tutorial = {
-        create: {
-          title: tutorial.title,
-          content: tutorial.content ?? null,
-          videoUrl: tutorial.videoUrl ?? null,
-        },
-      };
-    }
 
     if (Array.isArray(lessons) && lessons.length) {
       data.lessons = {
@@ -466,7 +394,7 @@ export class CoursesService {
 
     const created = await this.prisma.course.create({
       data,
-      include: { lessons: true, tutorial: true } as unknown as any,
+      include: { lessons: true } as unknown as any,
     } as any);
 
     return created as any;

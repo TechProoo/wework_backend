@@ -188,25 +188,6 @@ export class CoursesController {
     return this.coursesService.createLesson(id, createLessonDto as any);
   }
 
-  // 🔹 Tutorial Management
-  @Public()
-  @Post(':id/tutorial')
-  createTutorial(@Param('id') id: string, @Body() body: any) {
-    return this.coursesService.createTutorial(id, body as any);
-  }
-
-  @Public()
-  @Patch(':id/tutorial')
-  updateTutorial(@Param('id') id: string, @Body() body: any) {
-    return this.coursesService.updateTutorial(id, body as any);
-  }
-
-  @Public()
-  @Delete(':id/tutorial')
-  deleteTutorial(@Param('id') id: string) {
-    return this.coursesService.deleteTutorial(id);
-  }
-
   // 🔹 Lesson Endpoints
 
   @Public()
