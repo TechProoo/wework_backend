@@ -7,9 +7,11 @@ import { JwtAuthGuard } from './students/guards/jwt-auth.guard';
 import { CompaniesModule } from './companies/companies.module';
 import { CoursesModule } from './courses/courses.module';
 import { ConfigModule } from '@nestjs/config';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
+    PrismaModule,
     StudentsModule,
     CompaniesModule,
     CoursesModule,
