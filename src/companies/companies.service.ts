@@ -206,7 +206,11 @@ export class CompaniesService {
     return job;
   }
 
-  async findAllJobs(filters?: { companyId?: string; status?: string; remote?: boolean }) {
+  async findAllJobs(filters?: {
+    companyId?: string;
+    status?: string;
+    remote?: boolean;
+  }) {
     const where: any = {};
 
     if (filters?.companyId) {
@@ -280,7 +284,11 @@ export class CompaniesService {
     return job;
   }
 
-  async updateJob(jobId: string, companyId: string, updateJobDto: UpdateJobDto) {
+  async updateJob(
+    jobId: string,
+    companyId: string,
+    updateJobDto: UpdateJobDto,
+  ) {
     // First check if job exists and belongs to company
     const job = await this.prisma.job.findUnique({
       where: { id: jobId },
@@ -343,7 +351,9 @@ export class CompaniesService {
     }
 
     if (job.companyId !== companyId) {
-      throw new ForbiddenException('You can only view applications for your own jobs');
+      throw new ForbiddenException(
+        'You can only view applications for your own jobs',
+      );
     }
 
     const applications = await this.prisma.application.findMany({

@@ -70,24 +70,35 @@ export class StudentsController {
       console.error('[students.controller] token preview error', err);
     }
 
-    // Set HttpOnly cookie with the access token
-    res.cookie('accessToken', token.access_token, {
+    // Determine cookie domain based on origin
+    const isProduction = process.env.NODE_ENV === 'production';
+    const cookieOptions: any = {
       httpOnly: true,
-      secure: true,
+      secure: true, // Required for sameSite: 'none'
       sameSite: 'none',
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days for better persistence
       path: '/',
-    });
+    };
+
+    // For production, explicitly set domain if needed
+    // Note: Don't set domain for localhost or it won't work
+    if (isProduction && origin?.includes('vercel.app')) {
+      // Let the browser handle the domain automatically
+      // Safari works better when domain is not explicitly set for cross-origin
+      console.log('[students.controller] Production cookie (auto domain)');
+    }
+
+    // Set HttpOnly cookie with the access token
+    res.cookie('accessToken', token.access_token, cookieOptions);
 
     // Also set CORS headers explicitly in the response
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Origin', origin);
 
     console.log('[students.controller] cookie set with settings:', {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'none',
-      path: '/',
+      ...cookieOptions,
+      tokenLength: token.access_token.length,
+      isProduction,
     });
 
     const setCookieHeader = res.getHeader('Set-Cookie');
@@ -111,7 +122,10 @@ export class StudentsController {
     });
 
     console.log('[students.controller] cookie cleared');
-    return { message: 'Logout successful' };
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Logout successful',
+    };
   }
 
   @Get('profile')
@@ -119,14 +133,25 @@ export class StudentsController {
   getProfile(@Request() req: any) {
     try {
       console.log('[students.controller] getProfile called');
+      console.log('[students.controller] Headers:', {
+        cookie: req.headers.cookie ? 'present' : 'MISSING',
+        origin: req.headers.origin,
+        userAgent: req.headers['user-agent'],
+        referer: req.headers.referer,
+      });
       console.log(
         '[students.controller] req.user:',
-        req.user ? 'present' : 'missing',
+        req.user ? 'present' : 'MISSING',
       );
 
       if (!req.user) {
         console.error('[students.controller] getProfile: no user in request');
-        throw new UnauthorizedException('User not authenticated');
+        console.error(
+          '[students.controller] This usually means JWT cookie is missing or invalid',
+        );
+        throw new UnauthorizedException(
+          'User not authenticated - cookie missing or invalid',
+        );
       }
 
       console.log(
