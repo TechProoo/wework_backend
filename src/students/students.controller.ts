@@ -10,6 +10,7 @@ import {
   Patch,
   Res,
   Param,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -114,12 +115,28 @@ export class StudentsController {
   }
 
   @Get('profile')
+  @HttpCode(HttpStatus.OK)
   getProfile(@Request() req: any) {
-    return {
-      statusCode: 200,
-      message: 'Profile fetched successfully',
-      data: req.user,
-    };
+    try {
+      console.log('[students.controller] getProfile called');
+      console.log('[students.controller] req.user:', req.user ? 'present' : 'missing');
+      
+      if (!req.user) {
+        console.error('[students.controller] getProfile: no user in request');
+        throw new UnauthorizedException('User not authenticated');
+      }
+
+      console.log('[students.controller] getProfile: returning user profile for', req.user.email);
+      
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Profile fetched successfully',
+        data: req.user,
+      };
+    } catch (error) {
+      console.error('[students.controller] getProfile error:', error);
+      throw error;
+    }
   }
 
   @Public()
