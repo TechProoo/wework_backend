@@ -24,7 +24,7 @@ async function bootstrap() {
   } catch (error) {
     console.error('[Database] Failed to connect:', error);
     throw new Error('Database connection failed');
-  };
+  }
 
   // Enhanced CORS configuration for cross-origin cookie support
   const allowedOrigins = [
