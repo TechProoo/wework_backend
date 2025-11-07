@@ -46,11 +46,19 @@ export class StudentsController {
   async login(
     @Body() loginStudentDto: LoginStudentDto,
     @Res({ passthrough: true }) res: Response,
+    @Request() req: any,
   ) {
+    // Log the origin of the request for debugging
+    const origin = req.headers.origin || req.headers.referer || 'unknown';
+    console.log('[students.controller] Login request from origin:', origin);
+    console.log('[students.controller] Request headers:', {
+      origin: req.headers.origin,
+      referer: req.headers.referer,
+      userAgent: req.headers['user-agent'],
+    });
+
     const token = await this.studentsService.login(loginStudentDto);
 
-    // Debug: log a short prefix of the token being issued so we can trace
-    // whether the same token gets sent back in subsequent requests.
     try {
       const preview =
         typeof token.access_token === 'string'
@@ -61,18 +69,18 @@ export class StudentsController {
       console.error('[students.controller] token preview error', err);
     }
 
-    // Set HttpOnly cookie with the access token. This prevents JS access to the token.
-    // For cross-origin scenarios (Vercel frontend → Render backend), we need:
-    // - secure: true (HTTPS only, required for sameSite: 'none')
-    // - sameSite: 'none' (allow cross-site cookies between different domains)
-    // These settings MUST match on both login and logout for the cookie to work properly
+    // Set HttpOnly cookie with the access token
     res.cookie('accessToken', token.access_token, {
       httpOnly: true,
-      secure: true, // Always use secure for deployed apps (HTTPS required)
-      sameSite: 'none', // Always allow cross-site for Vercel → Render
+      secure: true,
+      sameSite: 'none',
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-      path: '/', // Available across all paths
+      path: '/',
     });
+
+    // Also set CORS headers explicitly in the response
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Origin', origin);
 
     console.log('[students.controller] cookie set with settings:', {
       httpOnly: true,
@@ -81,7 +89,6 @@ export class StudentsController {
       path: '/',
     });
 
-    // Debug: log the Set-Cookie header that will be sent
     const setCookieHeader = res.getHeader('Set-Cookie');
     console.log('[students.controller] Set-Cookie header:', setCookieHeader);
 
