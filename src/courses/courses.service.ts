@@ -287,7 +287,7 @@ export class CoursesService {
   }
 
   async remove(id: string) {
-    // Delete course with all related data
+    // Delete course with all related data in the correct order
     // 1. Get all lessons for this course
     const lessons = await this.prisma.lesson.findMany({
       where: { courseId: id },
@@ -321,12 +321,22 @@ export class CoursesService {
       where: { courseId: id },
     } as any);
 
-    // 5. Delete all reviews for this course
+    // 5. Delete tutorial for this course (if exists)
+    try {
+      await (this.prisma as any).tutorial.deleteMany({
+        where: { courseId: id },
+      });
+    } catch (error) {
+      // Tutorial might not exist, continue
+      console.warn('No tutorial to delete or error deleting tutorial:', error);
+    }
+
+    // 6. Delete all reviews for this course
     await this.prisma.review.deleteMany({
       where: { courseId: id },
     } as any);
 
-    // 6. Delete all enrollments and related payments
+    // 7. Delete all enrollments and related payments
     const enrollments = await this.prisma.enrollment.findMany({
       where: { courseId: id },
       select: { id: true },
@@ -345,7 +355,7 @@ export class CoursesService {
       } as any);
     }
 
-    // 7. Finally, delete the course
+    // 8. Finally, delete the course
     return this.prisma.course.delete({ where: { id } } as any) as any;
   }
 
