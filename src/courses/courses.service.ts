@@ -286,7 +286,66 @@ export class CoursesService {
     return this.prisma.course.update({ where: { id }, data } as any) as any;
   }
 
-  remove(id: string) {
+  async remove(id: string) {
+    // Delete course with all related data
+    // 1. Get all lessons for this course
+    const lessons = await this.prisma.lesson.findMany({
+      where: { courseId: id },
+      select: { id: true, quizId: true },
+    });
+
+    // 2. Delete all quizzes and their questions for each lesson
+    for (const lesson of lessons) {
+      if (lesson.quizId) {
+        // Delete questions first
+        await this.prisma.question.deleteMany({
+          where: { quizId: lesson.quizId },
+        } as any);
+        // Delete quiz
+        await this.prisma.quiz.delete({
+          where: { id: lesson.quizId },
+        } as any);
+      }
+    }
+
+    // 3. Delete all progress records for these lessons
+    const lessonIds = lessons.map((l) => l.id);
+    if (lessonIds.length > 0) {
+      await this.prisma.progress.deleteMany({
+        where: { lessonId: { in: lessonIds } },
+      } as any);
+    }
+
+    // 4. Delete all lessons
+    await this.prisma.lesson.deleteMany({
+      where: { courseId: id },
+    } as any);
+
+    // 5. Delete all reviews for this course
+    await this.prisma.review.deleteMany({
+      where: { courseId: id },
+    } as any);
+
+    // 6. Delete all enrollments and related payments
+    const enrollments = await this.prisma.enrollment.findMany({
+      where: { courseId: id },
+      select: { id: true },
+    });
+
+    const enrollmentIds = enrollments.map((e) => e.id);
+    if (enrollmentIds.length > 0) {
+      // Delete payments linked to enrollments
+      await this.prisma.payment.deleteMany({
+        where: { enrollmentId: { in: enrollmentIds } },
+      } as any);
+
+      // Delete enrollments
+      await this.prisma.enrollment.deleteMany({
+        where: { courseId: id },
+      } as any);
+    }
+
+    // 7. Finally, delete the course
     return this.prisma.course.delete({ where: { id } } as any) as any;
   }
 
