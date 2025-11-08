@@ -179,7 +179,6 @@ export class StudentsController {
   }
 
   @Public()
-  @Public()
   @Get()
   async findAll() {
     const data = await this.studentsService.findAll();

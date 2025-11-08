@@ -1,5 +1,6 @@
 # @baseUrl = https://wework-backend.onrender.com
-@baseUrl = http://localhost:3000
+@baseUrl = https://weworkbackend-production.up.railway.app
+
 
 ### 🧍‍♂️ Student sign-up
 POST {{baseUrl}}/students/signup
@@ -49,3 +50,7 @@ Content-Type: application/json
   "graduationYear": "2026",
   "email": "newemail@example.com"
 }
+
+### 👥 Get users
+GET https://weworkbackend-production.up.railway.app/students
+

@@ -118,6 +118,19 @@ model Course {
   enrollments Enrollment[]
   lessons     Lesson[]
   reviews     Review[]
+  tutorial    Tutorial?
+}
+
+model Tutorial {
+  id        String   @id @default(cuid())
+  courseId  String   @unique
+  title     String
+  content   String?
+  videoUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course Course @relation(fields: [courseId], references: [id])
 }
 
 model Lesson {

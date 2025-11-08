@@ -321,15 +321,10 @@ export class CoursesService {
       where: { courseId: id },
     } as any);
 
-    // 5. Delete tutorial for this course (if exists)
-    try {
-      await (this.prisma as any).tutorial.deleteMany({
-        where: { courseId: id },
-      });
-    } catch (error) {
-      // Tutorial might not exist, continue
-      console.warn('No tutorial to delete or error deleting tutorial:', error);
-    }
+    // 5. Delete all tutorials for this course (if exists)
+    await (this.prisma as any).tutorial.deleteMany({
+      where: { courseId: id },
+    });
 
     // 6. Delete all reviews for this course
     await this.prisma.review.deleteMany({
