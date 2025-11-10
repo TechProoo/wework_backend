@@ -86,7 +86,24 @@ export class CompaniesService {
     let { email, password } = loginCompanyDto;
     email = String(email).trim().toLowerCase();
 
-    const company = await this.prisma.company.findUnique({ where: { email } });
+    // Explicitly select fields (including passwordHash for verification)
+    const company = await this.prisma.company.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        companyName: true,
+        email: true,
+        passwordHash: true,
+        industry: true,
+        website: true,
+        description: true,
+        contactPersonName: true,
+        phone: true,
+        companySize: true,
+        createdAt: true,
+      },
+    });
+
     if (!company) {
       console.log('Company not found with email:', email);
       throw new UnauthorizedException('Invalid email');
@@ -97,9 +114,17 @@ export class CompaniesService {
 
     const { passwordHash, ...safeCompany } = company;
 
-    const access_token = await this.jwtService.signAsync(safeCompany);
+    // Sign a minimal token payload (avoid embedding passwordHash or large objects)
+    const tokenPayload = {
+      id: safeCompany.id,
+      companyName: safeCompany.companyName,
+      email: safeCompany.email,
+    } as const;
+
+    const access_token = await this.jwtService.signAsync(tokenPayload);
+
     return {
-      access_token: access_token,
+      access_token,
       data: safeCompany,
     };
   }

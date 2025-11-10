@@ -6,12 +6,12 @@ Content-Type: application/json
   "companyName": "Acme Tech Solutions",
   "contactPersonName": "Jane Doe",
   "email": "signup+test01@acme.test",
-  "phone": "+1 (555) 123-4567",
+  "phone": "09010191502",
   "website": "https://acme.test",
   "industry": "Software",
   "companySize": "51-200 employees",
   "description": "Automated test company used for endpoint validation and QA.",
-  "password": "TestPass!234",
+  "password": "TestPass!234"
 }
 
 ### 🧩 Create Company (minimal valid data)
