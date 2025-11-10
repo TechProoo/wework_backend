@@ -20,7 +20,16 @@ export class CompaniesService {
   constructor(private jwtService: JwtService) {}
 
   async signUp(createCompanyDto: CreateCompanyDto) {
-    let { email, companyName, password, ...rest } = createCompanyDto;
+    let {
+      email,
+      companyName,
+      password,
+      confirmPassword,
+      contactPersonName,
+      phone,
+      companySize,
+      ...rest
+    } = createCompanyDto as any;
     email = String(email).trim().toLowerCase();
 
     // Check if email already exists
@@ -32,18 +41,28 @@ export class CompaniesService {
       throw new ConflictException('Email already in use');
     }
 
+    // Validate confirmPassword if provided
+    if (confirmPassword !== undefined && confirmPassword !== password) {
+      throw new UnauthorizedException('Passwords do not match');
+    }
+
     const hashed = await bcrypt.hash(password, 10);
 
     // Create the company and store passwordHash
+    const createData: any = {
+      companyName,
+      email,
+      passwordHash: hashed,
+      contactPersonName: contactPersonName ?? null,
+      phone: phone ?? null,
+      companySize: companySize ?? null,
+      industry: rest.industry ?? null,
+      website: rest.website ?? null,
+      description: rest.description ?? null,
+    };
+
     const created = await this.prisma.company.create({
-      data: {
-        companyName,
-        email,
-        passwordHash: hashed,
-        industry: rest.industry ?? null,
-        website: rest.website ?? null,
-        description: rest.description ?? null,
-      },
+      data: createData,
     });
 
     const { passwordHash, ...safeCompany } = created;
@@ -92,13 +111,16 @@ export class CompaniesService {
         companyName: true,
         email: true,
         industry: true,
+        contactPersonName: true,
+        phone: true,
+        companySize: true,
         website: true,
         description: true,
         createdAt: true,
         _count: {
           select: { jobs: true },
         },
-      },
+      } as any,
     });
     return companies;
   }
@@ -111,13 +133,16 @@ export class CompaniesService {
         companyName: true,
         email: true,
         industry: true,
+        contactPersonName: true,
+        phone: true,
+        companySize: true,
         website: true,
         description: true,
         createdAt: true,
         jobs: {
           orderBy: { createdAt: 'desc' },
         },
-      },
+      } as any,
     });
 
     if (!company) {

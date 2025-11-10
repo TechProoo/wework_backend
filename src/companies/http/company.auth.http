@@ -1,37 +1,39 @@
 ### 🧪 Create Company (valid data)
-POST https://wework-backend.onrender.com
-/companies/signup
+POST https://weworkbackend-production.up.railway.app/companies/signup
 Content-Type: application/json
 
 {
-  "companyName": "TechPro Industries",
-  "industry": "Technology",
-  "email": "contact@tech.com",
-  "website": "https://techpro.com",
-  "description": "A next-generation software solutions provider.",
-  "password": "securePass123"
+  "companyName": "Acme Tech Solutions",
+  "contactPersonName": "Jane Doe",
+  "email": "signup+test01@acme.test",
+  "phone": "+1 (555) 123-4567",
+  "website": "https://acme.test",
+  "industry": "Software",
+  "companySize": "51-200 employees",
+  "description": "Automated test company used for endpoint validation and QA.",
+  "password": "TestPass!234",
 }
 
 ### 🧩 Create Company (minimal valid data)
-POST https://wework-backend.onrender.com
-/companies/signup
+POST https://weworkbackend-production.up.railway.app/companies/signup
 Content-Type: application/json
 
 {
   "companyName": "Minimal Co",
-  "email": "minimal@example.com",
-  "password": "minpass123"
+  "contactPersonName": "Alex",
+  "email": "minimal+test@acme.test",
+  "password": "minpass123",
+  "confirmPassword": "minpass123"
 }
 
 
 ### 🔑 Company Login (valid credentials)
-POST https://wework-backend.onrender.com
-/companies/login
+POST https://weworkbackend-production.up.railway.app/companies/login
 Content-Type: application/json
 
 {
-  "email": "contact@tech.com",
-  "password": "securePass123"
+  "email": "signup+test01@acme.test",
+  "password": "TestPass!234"
 }
 
 

@@ -91,6 +91,9 @@ model Company {
   industry     String?
   website      String?
   description  String?
+  contactPersonName String?
+  phone        String?
+  companySize  String?
   createdAt    DateTime @default(now())
 
   jobs Job[]

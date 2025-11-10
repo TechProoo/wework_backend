@@ -29,4 +29,21 @@ export class CreateCompanyDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  contactPersonName?: string;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  companySize?: string;
+
+  // Optional confirmPassword - backend will validate if present
+  @IsOptional()
+  @IsString()
+  confirmPassword?: string;
 }
