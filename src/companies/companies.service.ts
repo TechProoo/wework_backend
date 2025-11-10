@@ -87,22 +87,48 @@ export class CompaniesService {
     email = String(email).trim().toLowerCase();
 
     // Explicitly select fields (including passwordHash for verification)
-    const company = await this.prisma.company.findUnique({
-      where: { email },
-      select: {
-        id: true,
-        companyName: true,
-        email: true,
-        passwordHash: true,
-        industry: true,
-        website: true,
-        description: true,
-        contactPersonName: true,
-        phone: true,
-        companySize: true,
-        createdAt: true,
-      },
-    });
+    let company: any;
+    try {
+      company = await this.prisma.company.findUnique({
+        where: { email },
+        select: {
+          id: true,
+          companyName: true,
+          email: true,
+          passwordHash: true,
+          industry: true,
+          website: true,
+          description: true,
+          contactPersonName: true,
+          phone: true,
+          companySize: true,
+          createdAt: true,
+        },
+      });
+    } catch (err: any) {
+      // If the selected columns don't exist in the DB (P2022), retry with a safe subset
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2022'
+      ) {
+        console.warn('[companies.service] Prisma P2022 - missing column(s), retrying with fallback select', err.meta);
+        company = await this.prisma.company.findUnique({
+          where: { email },
+          select: {
+            id: true,
+            companyName: true,
+            email: true,
+            passwordHash: true,
+            industry: true,
+            website: true,
+            description: true,
+            createdAt: true,
+          },
+        });
+      } else {
+        throw err;
+      }
+    }
 
     if (!company) {
       console.log('Company not found with email:', email);
