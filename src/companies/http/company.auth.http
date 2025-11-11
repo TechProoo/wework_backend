@@ -1,17 +1,18 @@
-### 🧪 Create Company (valid data)
+### 🧪 Create Company (full data with all new fields)
 POST https://weworkbackend-production.up.railway.app/companies/signup
 Content-Type: application/json
 
 {
-  "companyName": "Acme Tech Solutions",
-  "contactPersonName": "Jane Doe",
-  "email": "signup+test01@acme.test",
-  "phone": "09010191502",
-  "website": "https://acme.test",
-  "industry": "Software",
-  "companySize": "51-200 employees",
-  "description": "Automated test company used for endpoint validation and QA.",
-  "password": "TestPass!234"
+  "companyName": "CloudStream Analytics",
+  "contactPersonName": "Sarah Martinez",
+  "email": "sarah.martinez@cloudstream.io",
+  "phone": "+1-555-0142",
+  "website": "https://cloudstream.io",
+  "industry": "Data Analytics & AI",
+  "companySize": "11-50 employees",
+  "description": "CloudStream provides real-time data analytics and machine learning solutions for enterprise clients.",
+  "password": "SecurePass2024!",
+  "confirmPassword": "SecurePass2024!"
 }
 
 ### 🧩 Create Company (minimal valid data)
@@ -19,26 +20,52 @@ POST https://weworkbackend-production.up.railway.app/companies/signup
 Content-Type: application/json
 
 {
-  "companyName": "Minimal Co",
-  "contactPersonName": "Alex",
-  "email": "minimal+test@acme.test",
-  "password": "minpass123",
-  "confirmPassword": "minpass123"
+  "companyName": "StartupHub Inc",
+  "contactPersonName": "Mike Chen",
+  "email": "mike@startuphub.co",
+  "phone": "08012345678",
+  "companySize": "1-10 employees",
+  "password": "startup2024",
+  "confirmPassword": "startup2024"
 }
 
+### 🏢 Create Company (medium enterprise)
+POST https://weworkbackend-production.up.railway.app/companies/signup
+Content-Type: application/json
 
-### 🔑 Company Login (valid credentials)
+{
+  "companyName": "FinTech Global Solutions",
+  "contactPersonName": "David Okonkwo",
+  "email": "david.okonkwo@fintechglobal.ng",
+  "phone": "+234-803-456-7890",
+  "website": "https://fintechglobal.ng",
+  "industry": "Financial Technology",
+  "companySize": "201-500 employees",
+  "description": "Leading African fintech company providing mobile banking and payment solutions across 12 countries.",
+  "password": "FinTech@2024",
+  "confirmPassword": "FinTech@2024"
+}
+
+### 🔑 Company Login (CloudStream)
 POST https://weworkbackend-production.up.railway.app/companies/login
 Content-Type: application/json
 
 {
-  "email": "signup+test01@acme.test",
-  "password": "TestPass!234"
+  "email": "sarah.martinez@cloudstream.io",
+  "password": "SecurePass2024!"
+}
+
+### 🔑 Company Login (StartupHub)
+POST https://weworkbackend-production.up.railway.app/companies/login
+Content-Type: application/json
+
+{
+  "email": "mike@startuphub.co",
+  "password": "startup2024"
 }
 
 
 ### 🚪 Company Logout
-GET https://wework-backend.onrender.com
-/companies/profile
+GET https://weworkbackend-production.up.railway.app/companies/profile
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZ3M0eWJyNDAwMDBmbDI4b3g0NHF1eHEiLCJjb21wYW55TmFtZSI6IlRlY2hQcm8gVGVzdCIsImVtYWlsIjoiY29udGFjdEB0ZWNoLmNvbSIsImluZHVzdHJ5IjpudWxsLCJ3ZWJzaXRlIjpudWxsLCJkZXNjcmlwdGlvbiI6bnVsbCwiY3JlYXRlZEF0IjoiMjAyNS0xMC0xNVQxNToxODoyMC40MTZaIiwiaWF0IjoxNzYwNjMzOTYzLCJleHAiOjE3NjA2MzQwMjN9.itwwhd2Yl0ZL0bZFAKvMHV5Wx3sS6Lr7S1dbwGQs1XA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtaHVkczJpbjAwMDBudjBreWQ5MzA1YjUiLCJjb21wYW55TmFtZSI6IkNsb3VkU3RyZWFtIEFuYWx5dGljcyIsImVtYWlsIjoic2FyYWgubWFydGluZXpAY2xvdWRzdHJlYW0uaW8iLCJpYXQiOjE3NjI4NTQwODQsImV4cCI6MTc2Mjg1NDE0NH0.7KVJ6jIWfaUkDgoT8bcDfuIWKB8htaeOYNqNq9YeJh4

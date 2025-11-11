@@ -1,0 +1,32 @@
+name: Apply Prisma migrations
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+
+jobs:
+  migrate:
+    name: Deploy migrations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./
+
+      - name: Run Prisma migrate deploy
+        working-directory: ./wework_backend
+        env:
+          # Add this secret to your repository secrets: SUPABASE_DIRECT_URL
+          DIRECT_URL: ${{ secrets.SUPABASE_DIRECT_URL }}
+        run: |
+          npm ci
+          npx prisma migrate deploy --schema=prisma/schema.prisma

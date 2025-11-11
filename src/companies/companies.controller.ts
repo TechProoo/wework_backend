@@ -97,17 +97,20 @@ export class CompaniesController {
 
   @Get('profile')
   @HttpCode(HttpStatus.OK)
-  getProfile(@Request() req: any) {
+  async getProfile(@Request() req: any) {
     console.log('[companies.controller] getProfile called');
 
     if (!req.user) {
       throw new Error('User not authenticated');
     }
 
+    // Fetch full company data from database using the ID from JWT
+    const company = await this.companiesService.findOne(req.user.id);
+
     return {
       statusCode: HttpStatus.OK,
       message: 'Profile fetched successfully',
-      data: req.user,
+      data: company,
     };
   }
 

@@ -32,10 +32,31 @@ export class CompaniesService {
     } = createCompanyDto as any;
     email = String(email).trim().toLowerCase();
 
-    // Check if email already exists
-    const existingUser = await this.prisma.company.findUnique({
-      where: { email },
-    });
+    // Check if email already exists. Use a minimal select to avoid
+    // reading non-existent optional columns (which can throw P2022
+    // if the DB schema hasn't been migrated yet).
+    let existingUser: any = null;
+    try {
+      existingUser = await this.prisma.company.findUnique({
+        where: { email },
+        select: { id: true, email: true },
+      });
+    } catch (err: any) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2022'
+      ) {
+        // If the DB is missing columns, assume user does not exist
+        // and continue; we'll handle create similarly below.
+        console.warn(
+          '[companies.service] Prisma P2022 during signUp.findUnique - missing column(s), continuing without existingUser check',
+          err.meta,
+        );
+        existingUser = null;
+      } else {
+        throw err;
+      }
+    }
 
     if (existingUser) {
       throw new ConflictException('Email already in use');
@@ -61,9 +82,50 @@ export class CompaniesService {
       description: rest.description ?? null,
     };
 
-    const created = await this.prisma.company.create({
-      data: createData,
-    });
+    // Attempt to create with full data; if the DB is missing some
+    // optional columns (P2022), retry with a reduced payload so
+    // signup remains functional until migrations are applied.
+    let created: any;
+    try {
+      created = await this.prisma.company.create({ data: createData });
+    } catch (err: any) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2022'
+      ) {
+        console.warn(
+          '[companies.service] Prisma P2022 during signUp.create - retrying with reduced data',
+          err.meta,
+        );
+        const fallbackData: any = {
+          companyName,
+          email,
+          passwordHash: hashed,
+        };
+
+        try {
+          created = await this.prisma.company.create({ data: fallbackData });
+        } catch (err2: any) {
+          // If fallback also fails, rethrow the original error if it's more informative
+          if (err2 instanceof Prisma.PrismaClientKnownRequestError) {
+            // map unique constraint to ConflictException for nicer API behavior
+            if (err2.code === 'P2002') {
+              throw new ConflictException(
+                'Email or company name already in use',
+              );
+            }
+          }
+          throw err2;
+        }
+      } else if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2002'
+      ) {
+        throw new ConflictException('Email or company name already in use');
+      } else {
+        throw err;
+      }
+    }
 
     const { passwordHash, ...safeCompany } = created;
 
@@ -111,7 +173,11 @@ export class CompaniesService {
         err instanceof Prisma.PrismaClientKnownRequestError &&
         err.code === 'P2022'
       ) {
-        console.warn('[companies.service] Prisma P2022 - missing column(s), retrying with fallback select', err.meta);
+        console.warn(
+          '[companies.service] Prisma P2022 during login - missing column(s), retrying with fallback select',
+          err.meta,
+        );
+        // Exclude optional new columns that may not exist yet: contactPersonName, phone, companySize
         company = await this.prisma.company.findUnique({
           where: { email },
           select: {
@@ -177,24 +243,57 @@ export class CompaniesService {
   }
 
   async findOne(id: string) {
-    const company = await this.prisma.company.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        companyName: true,
-        email: true,
-        industry: true,
-        contactPersonName: true,
-        phone: true,
-        companySize: true,
-        website: true,
-        description: true,
-        createdAt: true,
-        jobs: {
-          orderBy: { createdAt: 'desc' },
-        },
-      } as any,
-    });
+    let company: any;
+
+    try {
+      company = await this.prisma.company.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          companyName: true,
+          email: true,
+          industry: true,
+          contactPersonName: true,
+          phone: true,
+          companySize: true,
+          website: true,
+          description: true,
+          createdAt: true,
+          jobs: {
+            orderBy: { createdAt: 'desc' },
+          },
+        } as any,
+      });
+    } catch (err: any) {
+      // If the selected columns don't exist in the DB (P2022), retry with a safe subset
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === 'P2022'
+      ) {
+        console.warn(
+          '[companies.service] Prisma P2022 during findOne - missing column(s), retrying with fallback select',
+          err.meta,
+        );
+        // Exclude optional new columns that may not exist yet: contactPersonName, phone, companySize
+        company = await this.prisma.company.findUnique({
+          where: { id },
+          select: {
+            id: true,
+            companyName: true,
+            email: true,
+            industry: true,
+            website: true,
+            description: true,
+            createdAt: true,
+            jobs: {
+              orderBy: { createdAt: 'desc' },
+            },
+          } as any,
+        });
+      } else {
+        throw err;
+      }
+    }
 
     if (!company) {
       throw new NotFoundException(`Company with ID ${id} not found`);
