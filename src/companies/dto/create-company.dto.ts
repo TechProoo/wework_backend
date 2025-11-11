@@ -4,6 +4,7 @@ import {
   IsString,
   IsUrl,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreateCompanyDto {
@@ -23,6 +24,7 @@ export class CreateCompanyDto {
   industry?: string;
 
   @IsOptional()
+  @ValidateIf((o) => o.website !== '' && o.website !== null && o.website !== undefined)
   @IsUrl()
   website?: string;
 
