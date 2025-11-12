@@ -24,7 +24,9 @@ export class CreateCompanyDto {
   industry?: string;
 
   @IsOptional()
-  @ValidateIf((o) => o.website !== '' && o.website !== null && o.website !== undefined)
+  @ValidateIf(
+    (o) => o.website !== '' && o.website !== null && o.website !== undefined,
+  )
   @IsUrl()
   website?: string;
 
