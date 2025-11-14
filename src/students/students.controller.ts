@@ -11,11 +11,13 @@ import {
   Res,
   Param,
   UnauthorizedException,
+  Delete,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { LoginStudentDto } from './dto/login-student.dto';
+import { JobProfileDto } from './dto/job-profile.dto';
 import { Public } from '../decorators/public.decorator';
 // import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignupResponse } from './interfaces/students.auth';
@@ -226,6 +228,56 @@ export class StudentsController {
       statusCode: HttpStatus.OK,
       message: 'Profile updated successfully',
       data: updatedStudent,
+    };
+  }
+
+  // Job Profile Endpoints
+  @Post('job-profile')
+  @HttpCode(HttpStatus.OK)
+  async createOrUpdateJobProfile(
+    @Request() req: { user: any },
+    @Body() jobProfileDto: JobProfileDto,
+  ) {
+    const profile = await this.studentsService.createOrUpdateJobProfile(
+      req.user.id,
+      jobProfileDto,
+    );
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Job profile saved successfully',
+      data: profile,
+    };
+  }
+
+  @Get('job-profile')
+  @HttpCode(HttpStatus.OK)
+  async getJobProfile(@Request() req: { user: any }) {
+    const profile = await this.studentsService.getJobProfile(req.user.id);
+
+    if (!profile) {
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'No job profile found',
+        data: null,
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Job profile retrieved successfully',
+      data: profile,
+    };
+  }
+
+  @Delete('job-profile')
+  @HttpCode(HttpStatus.OK)
+  async deleteJobProfile(@Request() req: { user: any }) {
+    await this.studentsService.deleteJobProfile(req.user.id);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Job profile deleted successfully',
     };
   }
 }

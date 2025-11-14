@@ -213,4 +213,114 @@ export class StudentsService {
       },
     } as any);
   }
+
+  // Job Profile Methods
+  async createOrUpdateJobProfile(
+    studentId: string,
+    jobProfileData: {
+      headline?: string;
+      bio?: string;
+      resumeUrl?: string;
+      skills?: string[];
+    },
+  ) {
+    // Check if student exists
+    const student = await this.prisma.student.findUnique({
+      where: { id: studentId },
+    });
+
+    if (!student) {
+      throw new NotFoundException('Student not found');
+    }
+
+    // Check if profile already exists
+    const existingProfile = await this.prisma.jobProfile.findUnique({
+      where: { studentId },
+    });
+
+    if (existingProfile) {
+      // Update existing profile
+      return this.prisma.jobProfile.update({
+        where: { studentId },
+        data: {
+          headline: jobProfileData.headline,
+          bio: jobProfileData.bio,
+          resumeUrl: jobProfileData.resumeUrl,
+          skills: jobProfileData.skills || [],
+        },
+        include: {
+          student: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              university: true,
+              major: true,
+              graduationYear: true,
+            },
+          },
+        },
+      });
+    } else {
+      // Create new profile
+      return this.prisma.jobProfile.create({
+        data: {
+          studentId,
+          headline: jobProfileData.headline,
+          bio: jobProfileData.bio,
+          resumeUrl: jobProfileData.resumeUrl,
+          skills: jobProfileData.skills || [],
+        },
+        include: {
+          student: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              university: true,
+              major: true,
+              graduationYear: true,
+            },
+          },
+        },
+      });
+    }
+  }
+
+  async getJobProfile(studentId: string) {
+    const profile = await this.prisma.jobProfile.findUnique({
+      where: { studentId },
+      include: {
+        student: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            university: true,
+            major: true,
+            graduationYear: true,
+          },
+        },
+      },
+    });
+
+    return profile;
+  }
+
+  async deleteJobProfile(studentId: string) {
+    const existingProfile = await this.prisma.jobProfile.findUnique({
+      where: { studentId },
+    });
+
+    if (!existingProfile) {
+      throw new NotFoundException('Job profile not found');
+    }
+
+    return this.prisma.jobProfile.delete({
+      where: { studentId },
+    });
+  }
 }

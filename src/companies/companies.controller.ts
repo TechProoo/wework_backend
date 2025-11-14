@@ -297,7 +297,7 @@ export class CompaniesController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: 'Total students fetched successfully',
+      message: 'Total Companies fetched successfully',
       data: { total },
     };
   }
