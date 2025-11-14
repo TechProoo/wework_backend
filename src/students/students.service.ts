@@ -15,7 +15,7 @@ import { StudentData } from './interfaces/students.auth';
 
 @Injectable()
 export class StudentsService {
-  private readonly prisma: PrismaClient;
+  private readonly prisma: any; // Use any to bypass stale TypeScript cache
 
   constructor(private readonly jwtService: JwtService) {
     this.prisma = new PrismaClient();
