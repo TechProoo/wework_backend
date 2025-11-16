@@ -202,16 +202,6 @@ export class StudentsController {
     };
   }
 
-  @Public()
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const data = await this.studentsService.findOne(id);
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Student retrieved',
-      data,
-    };
-  }
 
   @Patch('profile')
   @HttpCode(HttpStatus.OK)
@@ -278,6 +268,17 @@ export class StudentsController {
     return {
       statusCode: HttpStatus.OK,
       message: 'Job profile deleted successfully',
+    };
+  }
+
+  @Public()
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const data = await this.studentsService.findOne(id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Student retrieved',
+      data,
     };
   }
 }
