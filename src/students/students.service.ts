@@ -436,4 +436,59 @@ export class StudentsService {
 
     return applications;
   }
+
+  /**
+   * Bookmarks: create, list, delete
+   */
+  async createBookmark(
+    studentId: string,
+    data: { type: 'JOB' | 'COURSE'; targetId: string },
+  ) {
+    // ensure student exists
+    const student = await this.prisma.student.findUnique({
+      where: { id: studentId },
+    });
+    if (!student) throw new NotFoundException('Student not found');
+
+    // prevent duplicates (unique constraint at prisma level too)
+    const existing = await this.prisma.bookmark.findFirst({
+      where: { studentId, type: data.type, targetId: data.targetId },
+    });
+    if (existing) return existing;
+
+    const created = await this.prisma.bookmark.create({
+      data: {
+        studentId,
+        type: data.type,
+        targetId: data.targetId,
+      },
+    });
+
+    return created;
+  }
+
+  async getBookmarks(studentId: string) {
+    const student = await this.prisma.student.findUnique({
+      where: { id: studentId },
+    });
+    if (!student) throw new NotFoundException('Student not found');
+
+    const list = await this.prisma.bookmark.findMany({
+      where: { studentId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return list;
+  }
+
+  async deleteBookmark(studentId: string, bookmarkId: string) {
+    const bm = await this.prisma.bookmark.findUnique({
+      where: { id: bookmarkId },
+    });
+    if (!bm) throw new NotFoundException('Bookmark not found');
+    if (bm.studentId !== studentId)
+      throw new UnauthorizedException('Not allowed to delete this bookmark');
+
+    await this.prisma.bookmark.delete({ where: { id: bookmarkId } });
+    return { success: true };
+  }
 }

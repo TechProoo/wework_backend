@@ -46,6 +46,11 @@ enum ApplicationStatus {
   REJECTED
 }
 
+enum BookmarkType {
+  JOB
+  COURSE
+}
+
 enum ProgressStatus {
   NOT_STARTED
   IN_PROGRESS
@@ -81,6 +86,7 @@ model Student {
   progress     Progress[] // track per-lesson progress
   applications Application[]
   jobProfile   JobProfile?
+  bookmarks    Bookmark[]
 }
 
 model Company {
@@ -286,4 +292,17 @@ model Application {
 
   student Student @relation(fields: [studentId], references: [id])
   job     Job     @relation(fields: [jobId], references: [id])
+}
+
+// Generic Bookmark model to allow students to bookmark jobs or courses
+model Bookmark {
+  id        String       @id @default(cuid())
+  studentId String
+  type      BookmarkType
+  targetId  String
+  createdAt DateTime     @default(now())
+
+  student Student @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, type, targetId])
 }

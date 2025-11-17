@@ -19,6 +19,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { LoginStudentDto } from './dto/login-student.dto';
 import { JobProfileDto } from './dto/job-profile.dto';
 import { CreateApplicationDto } from './dto/create-application.dto';
+import CreateBookmarkDto from './dto/create-bookmark.dto';
 import { Public } from '../decorators/public.decorator';
 // import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignupResponse } from './interfaces/students.auth';
@@ -301,6 +302,45 @@ export class StudentsController {
       statusCode: HttpStatus.OK,
       message: 'Applications retrieved successfully',
       data: applications,
+    };
+  }
+
+  @Post('bookmarks')
+  @HttpCode(HttpStatus.CREATED)
+  async createBookmark(
+    @Request() req: { user: any },
+    @Body() createBookmarkDto: CreateBookmarkDto,
+  ) {
+    const bm = await this.studentsService.createBookmark(
+      req.user.id,
+      createBookmarkDto as any,
+    );
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Bookmark saved',
+      data: bm,
+    };
+  }
+
+  @Get('bookmarks')
+  @HttpCode(HttpStatus.OK)
+  async getBookmarks(@Request() req: { user: any }) {
+    const list = await this.studentsService.getBookmarks(req.user.id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Bookmarks retrieved',
+      data: list,
+    };
+  }
+
+  @Delete('bookmarks/:id')
+  @HttpCode(HttpStatus.OK)
+  async deleteBookmark(@Request() req: { user: any }, @Param('id') id: string) {
+    await this.studentsService.deleteBookmark(req.user.id, id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Bookmark removed',
     };
   }
 
