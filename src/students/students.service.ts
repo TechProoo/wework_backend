@@ -400,4 +400,30 @@ export class StudentsService {
 
     return created;
   }
+
+  /**
+   * Get applications for a student with job info
+   */
+  async getApplications(studentId: string) {
+    // Ensure student exists
+    const student = await this.prisma.student.findUnique({ where: { id: studentId } });
+    if (!student) throw new NotFoundException('Student not found');
+
+    const applications = await this.prisma.application.findMany({
+      where: { studentId },
+      include: {
+        job: {
+          select: {
+            id: true,
+            title: true,
+            companyId: true,
+            salaryRange: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return applications;
+  }
 }
