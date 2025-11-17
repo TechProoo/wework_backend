@@ -293,7 +293,9 @@ export class StudentsController {
   @Get('applications')
   @HttpCode(HttpStatus.OK)
   async getApplications(@Request() req: { user: any }) {
-    const applications = await this.studentsService.getApplications(req.user.id);
+    const applications = await this.studentsService.getApplications(
+      req.user.id,
+    );
 
     return {
       statusCode: HttpStatus.OK,

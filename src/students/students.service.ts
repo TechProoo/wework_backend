@@ -406,7 +406,9 @@ export class StudentsService {
    */
   async getApplications(studentId: string) {
     // Ensure student exists
-    const student = await this.prisma.student.findUnique({ where: { id: studentId } });
+    const student = await this.prisma.student.findUnique({
+      where: { id: studentId },
+    });
     if (!student) throw new NotFoundException('Student not found');
 
     const applications = await this.prisma.application.findMany({
@@ -418,6 +420,14 @@ export class StudentsService {
             title: true,
             companyId: true,
             salaryRange: true,
+            location: true,
+            remote: true,
+            company: {
+              select: {
+                id: true,
+                companyName: true,
+              },
+            },
           },
         },
       },
