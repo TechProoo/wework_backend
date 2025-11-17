@@ -18,6 +18,7 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { LoginStudentDto } from './dto/login-student.dto';
 import { JobProfileDto } from './dto/job-profile.dto';
+import { CreateApplicationDto } from './dto/create-application.dto';
 import { Public } from '../decorators/public.decorator';
 // import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SignupResponse } from './interfaces/students.auth';
@@ -202,7 +203,6 @@ export class StudentsController {
     };
   }
 
-
   @Patch('profile')
   @HttpCode(HttpStatus.OK)
   async updateProfile(
@@ -268,6 +268,25 @@ export class StudentsController {
     return {
       statusCode: HttpStatus.OK,
       message: 'Job profile deleted successfully',
+    };
+  }
+
+  // Student applies to a job
+  @Post('applications')
+  @HttpCode(HttpStatus.CREATED)
+  async createApplication(
+    @Request() req: { user: any },
+    @Body() createApplicationDto: CreateApplicationDto,
+  ) {
+    const application = await this.studentsService.createApplication(
+      req.user.id,
+      createApplicationDto as any,
+    );
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Application submitted successfully',
+      data: application,
     };
   }
 

@@ -3,6 +3,7 @@ import {
   ConflictException,
   NotFoundException,
   UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -322,5 +323,81 @@ export class StudentsService {
     return this.prisma.jobProfile.delete({
       where: { studentId },
     });
+  }
+
+  /**
+   * Create a new application for a student to a job.
+   * Validates job existence and prevents duplicate applications.
+   */
+  async createApplication(
+    studentId: string,
+    applicationData: {
+      jobId: string;
+      resumeUrl?: string;
+      coverLetter?: string;
+    },
+  ) {
+    const { jobId, resumeUrl, coverLetter } = applicationData;
+
+    // Ensure student exists
+    const student = await this.prisma.student.findUnique({
+      where: { id: studentId },
+    });
+    if (!student) {
+      throw new NotFoundException('Student not found');
+    }
+
+    // Ensure job exists
+    const job = await this.prisma.job.findUnique({ where: { id: jobId } });
+    if (!job) {
+      throw new NotFoundException('Job not found');
+    }
+
+    // Optional: disallow applying to non-open jobs
+    // (business rule — adjust if you want to allow applying to closed roles)
+    if (job.status && job.status !== 'OPEN') {
+      throw new BadRequestException('Cannot apply to a job that is not open');
+    }
+
+    // Check for existing application by this student to this job
+    const existing = await this.prisma.application.findFirst({
+      where: { jobId, studentId },
+    });
+
+    if (existing) {
+      throw new ConflictException('You have already applied to this job');
+    }
+
+    // Create application record
+    const created = await this.prisma.application.create({
+      data: {
+        studentId,
+        jobId,
+        resumeUrl: resumeUrl ?? null,
+        coverLetter: coverLetter ?? null,
+      },
+      include: {
+        student: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            university: true,
+            major: true,
+            graduationYear: true,
+          },
+        },
+        job: {
+          select: {
+            id: true,
+            title: true,
+            companyId: true,
+          },
+        },
+      },
+    });
+
+    return created;
   }
 }
